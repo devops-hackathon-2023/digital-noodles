@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {SizeMe} from "react-sizeme";
 import GridLayout, {Layout} from "react-grid-layout";
 import {DashboardGridCellConfig} from "@/utils/types";
 import { v4 as uuidv4 } from 'uuid';
+import classNames from "classnames"
 
 interface DashboardGridProps {
     layout: DashboardGridCellConfig[]
@@ -10,6 +11,7 @@ interface DashboardGridProps {
 }
 
 const DashboardGrid: React.FC<DashboardGridProps> = ({ layout, onLayoutChanged }) => {
+    const [editing, setEditing] = useState(false)
 
     const onDrop = (layout, layoutItem, _event) => {
         alert(`Dropped element props:\n${JSON.stringify(layoutItem, ['x', 'y', 'w', 'h'], 2)}`);
@@ -25,6 +27,7 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({ layout, onLayoutChanged }
 
     return (
         <>
+            <button type={"button"} onClick={() => setEditing((editing) => !editing)}>Edit</button>
             <div
                 className="droppable-element"
                 style={{ padding: "32px", backgroundColor: "red", width: "120px" }}
@@ -50,7 +53,11 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({ layout, onLayoutChanged }
                     isDroppable={true}
                 >
                     {
-                        layout.map((datagridCellConfig) => <div key={datagridCellConfig.layout.i}>{datagridCellConfig.layout.i}</div>)
+                        layout.map((datagridCellConfig) => <div
+                            key={datagridCellConfig.layout.i}
+                            className={classNames('border', {'-top-2': editing})}>
+                            {datagridCellConfig.layout.i}
+                        </div>)
                     }
                 </GridLayout>
                 }
