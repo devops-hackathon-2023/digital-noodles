@@ -1,7 +1,13 @@
 import { useSession, signIn, signOut } from "next-auth/react"
+import useSWR from "swr";
+import fetcher from "@/utils/fetcher";
 
 export default function LoginPage() {
     const { data: session } = useSession()
+    const { data: test } = useSWR("/api/test", fetcher)
+
+    console.log(test);
+
     if (session) {
         return (
             <>
