@@ -7,23 +7,24 @@ import classNames from "classnames"
 
 interface DashboardGridProps {
     layout: DashboardGridCellConfig[]
-    onLayoutChanged: (layout: Layout[]) => void
+    onLayoutChange: (layout: Layout[]) => void
+    onCellDelete: (cellId: string) => void
 }
 
-const DashboardGrid: React.FC<DashboardGridProps> = ({ layout, onLayoutChanged }) => {
+const DashboardGrid: React.FC<DashboardGridProps> = ({ layout, onLayoutChange }) => {
     const [editing, setEditing] = useState(false)
 
     const onDrop = (layout, layoutItem, _event) => {
-        alert(`Dropped element props:\n${JSON.stringify(layoutItem, ['x', 'y', 'w', 'h'], 2)}`);
-
-        const last = layout[layout.length - 1];
         const modifiedObject = { ...layoutItem, i: uuidv4() };
 
-        onLayoutChanged([
+        onLayoutChange([
             ...layout.slice(0, layout.length - 1),
             modifiedObject
         ]);
     };
+
+    const onDelete = (id: string) => {
+    }
 
     return (
         <>
@@ -55,7 +56,10 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({ layout, onLayoutChanged }
                     {
                         layout.map((datagridCellConfig) => <div
                             key={datagridCellConfig.layout.i}
-                            className={classNames('border', {'-top-2': editing})}>
+                            className={classNames('border bg-white transition-[top] duration-200 relative ease-in-out', {'-top-2 drop-shadow': editing, 'top-0': !editing})}>
+                            {
+                                editing && <div className={classNames('absolute', 'top-0.5', 'right-0.5')}>Delete</div>
+                            }
                             {datagridCellConfig.layout.i}
                         </div>)
                     }

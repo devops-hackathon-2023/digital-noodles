@@ -12,9 +12,9 @@ interface DeploymentUnitPageProps {
 
 const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({ deploymentUnitId }) => {
     const [layout, setLayout] = useState([
-        { layout: {i: "a", x: 0, y: 0, w: 1, h: 2 }},
-        { layout: {i: "b", x: 1, y: 0, w: 3, h: 2, minW: 2, maxW: 4 }},
-        { layout: {i: "c", x: 4, y: 0, w: 1, h: 2} }
+        { cellId: "a", layout: {i: "a", x: 0, y: 0, w: 1, h: 2 }},
+        { cellId: "b", layout: {i: "b", x: 1, y: 0, w: 3, h: 2, minW: 2, maxW: 4 }},
+        { cellId: "c", layout: {i: "c", x: 4, y: 0, w: 1, h: 2} }
     ])
 
     useEffect(() => {
@@ -25,7 +25,7 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({ deploymentUnitI
         <>
             <div style={{ backgroundColor: "lightgray" }}>
                 {/*@ts-ignore*/}
-                <DashboardGrid layout={layout} onLayoutChanged={(layout) => setLayout(layout.map(layout => ({ layout: layout })))}/>
+                <DashboardGrid layout={layout} onLayoutChange={(layout) => setLayout(layout.map(layout => ({ layout: layout })))}/>
             </div>
         </>
     );
