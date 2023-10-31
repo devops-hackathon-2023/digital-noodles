@@ -2,10 +2,12 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
+import { useTheme } from 'next-themes'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+  const { setTheme } = useTheme()
   return (
     <>
       <Head>
@@ -15,6 +17,8 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={`${styles.main} ${inter.className}`}>
+        <div onClick={() => setTheme("dark")}>Toggle dark theme</div>
+        <div onClick={() => setTheme("light")}>Toggle light theme</div>
         <div className={styles.description}>
           <p>
             Get started by editing&nbsp;
