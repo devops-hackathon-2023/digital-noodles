@@ -1,15 +1,15 @@
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
-
 import {ThemeProvider} from "next-themes"
-import { type ThemeProviderProps } from "next-themes/dist/types"
+import {SessionProvider} from "next-auth/react";
 
-export default function App({ Component, pageProps }: AppProps) {
-  return <ThemeProvider
+export default function App({ Component, pageProps: { session, ...pageProps }}: AppProps) {
+  return <SessionProvider session={session}><ThemeProvider
       attribute="class"
       defaultTheme="system"
       enableSystem
       disableTransitionOnChange>
     <Component {...pageProps} />
   </ThemeProvider>
+  </SessionProvider>
 }
