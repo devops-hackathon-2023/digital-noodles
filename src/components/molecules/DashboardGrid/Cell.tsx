@@ -15,7 +15,7 @@ const Cell: React.FC<CellProps> = ({ id }) => {
 
     return (
         <div>
-            { data && <>Avg build time: { data.avg }</>}
+            { data ? <>Avg build time: { data.avg }</> : "Loading"}
         </div>
     );
 };

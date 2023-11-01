@@ -54,7 +54,8 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({ dashboardConfigId, layout
         onLayoutChange(dashboardConfigId, newLayout);
     }
 
-    const onDelete = (id: string) => {
+    const onDelete = (dataCellId: string) => {
+        onLayoutChange(dashboardConfigId, layout.filter((dashboardCell) => dashboardCell.id !== dataCellId))
     }
 
     return (
@@ -110,7 +111,7 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({ dashboardConfigId, layout
                             key={datagridCellConfig.id}
                             className={classNames('border bg-white transition-[top] duration-200 relative ease-in-out', {'-top-2 drop-shadow': editing, 'top-0': !editing})}>
                             {
-                                editing && <div className={classNames('absolute', 'top-0.5', 'right-0.5')}>Delete</div>
+                                editing && <div onClick={() => onDelete(datagridCellConfig.id)} className={classNames('absolute', 'top-0.5', 'right-0.5')}>Delete</div>
                             }
                             <Cell id={datagridCellConfig.id} w={datagridCellConfig.w} h={datagridCellConfig.h}/>
                             {datagridCellConfig.id}
