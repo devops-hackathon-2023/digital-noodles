@@ -12,9 +12,9 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
 router.use(auth);
 
 router.get(async (req, res) => {
-    const { typeId, dashboardType } = req.query
+    const { typeId, dashboardType, env } = req.query
     const dashboardConfigService = container.resolve(DashboardConfigService);
-    res.json(await dashboardConfigService.show(typeId as string, dashboardType as DashboardType));
+    res.json(await dashboardConfigService.index(typeId as string, dashboardType as DashboardType));
 });
 
 export default router.handler();

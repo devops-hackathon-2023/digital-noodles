@@ -40,13 +40,14 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  id               String    @id @default(cuid())
+  name             String?
+  email            String?   @unique
+  emailVerified    DateTime?
+  image            String?
+  accounts         Account[]
+  sessions         Session[]
+  dashboardConfigs DashboardConfig[]
 }
 
 model VerificationToken {
@@ -55,4 +56,40 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model DashboardConfig {
+    id             String @id @default(cuid())
+    dashboardType  DashboardType
+    env            String
+    typeId         String
+    userId         String
+    user           User @relation(fields: [userId], references: [id])
+    dashboardCells DashboardCell[]
+}
+
+enum DashboardType {
+    SAS
+    APP_MODULE
+    DEPLOYMENT_UNIT
+}
+
+enum StatType {
+    SYSTEM_DISK_USAGE
+    SYSTEM_RAM_USAGE
+    SYSTEM_BANDWIDTH
+    SYSTEM_CPU_USAGE
+    GATE
+    HEALTHCHECK
+    STATS_AVG_BUILD_TIME
+    STATS_LAST_DEPLOYMENT_BUILD_TIME
+    STATS_GATES_FAILED_PASSED
+}
+
+model DashboardCell {
+    id                String @id @default(cuid())
+    statId            String?
+    dashboardConfigId String
+    dashboardConfig   DashboardConfig @relation(fields: [dashboardConfigId], references: [id])
+    statType          StatType
 }
