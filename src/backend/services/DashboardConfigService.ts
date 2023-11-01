@@ -1,4 +1,4 @@
-import {DashboardConfig, PrismaClient } from "@prisma/client";
+import {DashboardCell, DashboardConfig, PrismaClient, StatType } from "@prisma/client";
 import {inject, injectable} from "tsyringe";
 import {DashboardType} from "@/backend/utils/types";
 import {AuthContext} from "@/backend/auth/AuthContext";
@@ -6,6 +6,7 @@ import {prisma} from "@/backend/prisma/implementation";
 import axios from "axios";
 import config from "tailwindcss/defaultConfig";
 import DOPOClient from "@/backend/services/clients/DOPOClient";
+import UpdateDashboardConfigRequest from "@/backend/requests/UpdateDashboardConfigRequest";
 
 @injectable()
 class DashboardConfigService {
@@ -97,6 +98,77 @@ class DashboardConfigService {
         return {
             typeId, dashboardType
         }
+    }
+
+    private async getDashboardConfigById(id: string) {
+        return prisma.dashboardConfig.findFirst({
+            where: {
+                id
+            }, include: {
+                dashboardCells: true
+            }
+        });
+    }
+
+    async update(dashboardConfigId: string, data: UpdateDashboardConfigRequest) {
+        const dashboardConfig = await this.prisma.dashboardConfig.findFirst({
+            where: {
+                id: dashboardConfigId
+            },
+            include: {
+                dashboardCells: true
+            }
+        })
+
+        if(!dashboardConfig) {
+            // TODO: error handling
+            return
+        }
+
+        let cellsToDelete: DashboardCell[] = [];
+        let cellsToCreate = data.dashboardCellConfigs.filter((dashboardConfig) => dashboardConfig.id === undefined);
+        let cellsToUpdate = data.dashboardCellConfigs.filter(dashboardConfig => dashboardConfig.id !== undefined);
+
+        dashboardConfig.dashboardCells.forEach((dashboardCell) => {
+            if(!data.dashboardCellConfigs.filter((dashboardConfig) => dashboardConfig.id !== undefined)
+                .map((dashboardCellConfig) => dashboardCellConfig.id).includes(dashboardCell.id))
+                cellsToDelete.push(dashboardCell);
+        })
+
+        await this.prisma.dashboardCell.deleteMany({
+            where: {
+                id: {
+                    in: cellsToDelete.map(cellsToDelete => cellsToDelete.id)
+                }
+            }
+        });
+
+        await this.prisma.dashboardCell.createMany({
+            data: cellsToCreate.map((cellToCreate) => ({
+                dashboardConfigId: dashboardConfig.id,
+                statType: cellToCreate.statType as StatType,
+                x: cellToCreate.x,
+                y: cellToCreate.y,
+                h: cellToCreate.h,
+                w: cellToCreate.w
+            }))
+        })
+
+        await Promise.all(cellsToUpdate.map((cellToUpdate) => {
+            return prisma.dashboardCell.update({
+                where: {
+                    id: cellToUpdate.id
+                },
+                data: {
+                    x: cellToUpdate.x,
+                    y: cellToUpdate.y,
+                    h: cellToUpdate.h,
+                    w: cellToUpdate.w
+                }
+            })
+        }))
+
+        return await this.getDashboardConfigById(dashboardConfigId);
     }
 }
 

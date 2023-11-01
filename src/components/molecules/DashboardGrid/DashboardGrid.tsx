@@ -7,22 +7,52 @@ import classNames from "classnames"
 import Cell from "@/components/molecules/DashboardGrid/Cell";
 
 interface DashboardGridProps {
+    dashboardConfigId: string
     layout: DashboardGridCellConfig[]
-    onLayoutChange: (layout: Layout[]) => void
+    onLayoutChange: (dashboardConfigId: string, layout: any[]) => void
     onCellDelete: (cellId: string) => void
 }
 
-const DashboardGrid: React.FC<DashboardGridProps> = ({ layout, onLayoutChange }) => {
+const DashboardGrid: React.FC<DashboardGridProps> = ({ dashboardConfigId, layout, onLayoutChange }) => {
     const [editing, setEditing] = useState(false)
+    const [draggedStatType, setDraggedStatType] = useState<string | undefined>(undefined)
 
-    const onDrop = (layout, layoutItem, _event) => {
+    const onDrop = (_, layoutItem, _event) => {
         const modifiedObject = { ...layoutItem, i: uuidv4() };
-
-        onLayoutChange([
-            ...layout.slice(0, layout.length - 1),
-            modifiedObject
+        console.log(_event);
+        console.log(draggedStatType)
+        onLayoutChange(dashboardConfigId, [
+                ...layout,
+                {
+                    statType: draggedStatType,
+                    x: layoutItem.x,
+                    y: layoutItem.y,
+                    w: layoutItem.w,
+                    h: layoutItem.h
+                }
         ]);
     };
+
+    const handleLayoutChange = (gridLayout: Layout[]) => {
+        console.log("Layout change")
+        const newLayout: any[] = []
+        gridLayout.forEach((gridLayoutCell) => {
+            console.log(gridLayout)
+            if(gridLayoutCell.i !== '__dropping-elem__') {
+                const item = layout.find((layoutCell) => layoutCell.id === gridLayoutCell.i)
+                newLayout.push({
+                    id: item?.id,
+                    statType: item?.statType,
+                    x: gridLayoutCell.x,
+                    y: gridLayoutCell.y,
+                    w: gridLayoutCell.w,
+                    h: gridLayoutCell.h
+                })
+            }
+        })
+
+        onLayoutChange(dashboardConfigId, newLayout);
+    }
 
     const onDelete = (id: string) => {
     }
@@ -30,6 +60,7 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({ layout, onLayoutChange })
     return (
         <>
             <button type={"button"} onClick={() => setEditing((editing) => !editing)}>Edit</button>
+            <div className={"flex gap-2"}>
             <div
                 className="droppable-element"
                 style={{ padding: "32px", backgroundColor: "red", width: "120px" }}
@@ -39,9 +70,29 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({ layout, onLayoutChange })
                 // Firefox requires some kind of initialization
                 // which we can do by adding this attribute
                 // @see https://bugzilla.mozilla.org/show_bug.cgi?id=568313
-                onDragStart={e => e.dataTransfer.setData("text/plain", "")}
+                onDragStart={e => {
+                    e.dataTransfer.setData("text/plain", "")
+                    setDraggedStatType("STATS_AVG_BUILD_TIME")
+                }}
             >
-                Droppable Element (Drag me!)
+                STATS_AVG_BUILD_TIME
+            </div>
+                <div
+            className="toolbox-item"
+            style={{ padding: "32px", backgroundColor: "red", width: "120px" }}
+            draggable={true}
+            unselectable="on"
+            // this is a hack for firefox
+            // Firefox requires some kind of initialization
+            // which we can do by adding this attribute
+            // @see https://bugzilla.mozilla.org/show_bug.cgi?id=568313
+            onDragStart={e => {
+                e.dataTransfer.setData("text/plain", "")
+                setDraggedStatType("STATS_LAST_DEPLOYMENT_BUILD_TIME")
+            }}
+        >
+                    STATS_LAST_DEPLOYMENT_BUILD_TIME (Does not work)
+        </div>
             </div>
             <SizeMe>
                 {({ size }) => <GridLayout
@@ -51,7 +102,7 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({ layout, onLayoutChange })
                     rowHeight={30}
                     width={size.width ? size.width : 1200}
                     onDrop={onDrop}
-                    onLayoutChange={(layout) => console.log(layout)}
+                    onLayoutChange={handleLayoutChange}
                     isDroppable={true}
                 >
                     {

@@ -8,13 +8,26 @@ import DashboardGrid from "@/components/molecules/DashboardGrid/DashboardGrid";
 import useSWR from "swr";
 import fetcher from "@/utils/fetcher";
 import {DashboardGridCellConfig} from "@/utils/types";
+import axios from "axios";
+import {swapItemWithId} from "@/utils/helpers";
 
 interface DeploymentUnitPageProps {
     deploymentUnitId: string
 }
 
 const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({ deploymentUnitId }) => {
-    const { data: layouts } = useSWR<any>(`/api/dashboard-configs?typeId=${deploymentUnitId}&dashboardType=DEPLOYMENT_UNIT`, fetcher)
+    const { data: dashboardConfigs, mutate: mutateDashboardConfigs } = useSWR<any>(`/api/dashboard-configs?typeId=${deploymentUnitId}&dashboardType=DEPLOYMENT_UNIT`, fetcher)
+
+    const handleLayoutChange = (dashboardConfigId: string, layout: any[]) => {
+        axios.put(`/api/dashboard-configs/${dashboardConfigId}`, { dashboardCellConfigs: layout }, { withCredentials: true })
+            .then((response) => response.data)
+            .then((data) => {
+                return mutateDashboardConfigs((layouts: any) => {
+                    const newLayouts = swapItemWithId(layouts, 'id', data.id, data);
+                    return newLayouts
+                })
+            });
+    }
 
     return (
         <>
@@ -22,9 +35,9 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({ deploymentUnitI
                 {/*@ts-ignore*/}
                 {/*<DashboardGrid layout={layout} onLayoutChange={(layout) => setLayout(layout.map(layout => ({ layout: layout })))}/>*/}
                 {
-                    layouts && layouts.map((layout: any) => <>
+                    dashboardConfigs && dashboardConfigs.map((layout: any) => <>
                         <div>ENV: {layout.env}</div>
-                        <DashboardGrid layout={layout.dashboardCells} onLayoutChange={(layout) => console.log(layout)} onCellDelete={() => {}}/>
+                        <DashboardGrid dashboardConfigId={layout.id} layout={layout.dashboardCells} onLayoutChange={handleLayoutChange} onCellDelete={() => {}}/>
                     </>)
                 }
             </div>
