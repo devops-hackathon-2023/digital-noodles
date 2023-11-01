@@ -3,6 +3,7 @@ import {ProfileDropdownMenu} from "@/components/organisms/profile-dropdown-menu"
 import {ModeToggle} from "@/components/ui/mode-toggle";
 import {usePathname} from "next/navigation";
 import Link from "next/link";
+import TeamSwitcher from "@/components/organisms/team-switcher";
 
 const Header = () => {
   const pathname = usePathname()
@@ -14,9 +15,12 @@ const Header = () => {
 
   return (
     <header
-      className="sticky top-0 z-50 w-full border-b">
+      className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-between">
-        <Link href={"/"}><strong>DOPO</strong></Link>
+        <div className={"flex items-center gap-5"}>
+          <Link href={"/"}><strong>DOPO</strong></Link>
+          <TeamSwitcher/>
+        </div>
         <div className={"flex gap-4 items-center"}>
           <Input placeholder={"Search..."} className={'w-full'}/>
           <div className={"flex-shrink-0"}>

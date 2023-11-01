@@ -43,7 +43,9 @@ const cards = [
 ];
 
 export default function Home() {
-  // const {data: deployments} = useFetch("sases?page=0&size=30&sort=name&order=asc")
+  const {data} = useFetch("sases?page=0&size=30&sort=name&order=asc")
+
+  console.log(data)
 
   return (
     <div className="container relative mt-5 flex flex-col gap-5">
