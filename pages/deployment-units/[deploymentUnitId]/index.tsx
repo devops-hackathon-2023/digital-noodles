@@ -5,12 +5,17 @@ import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import {SizeMe} from "react-sizeme";
 import DashboardGrid from "@/components/molecules/DashboardGrid/DashboardGrid";
+import useSWR from "swr";
+import fetcher from "@/utils/fetcher";
 
 interface DeploymentUnitPageProps {
     deploymentUnitId: string
 }
 
 const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({ deploymentUnitId }) => {
+    const { data: dashboardConfig } = useSWR(`/api/dashboard-configs?typeId=${deploymentUnitId}&dashboardType=DEPLOYMENT_UNIT`, fetcher)
+
+
     const [layout, setLayout] = useState([
         { cellId: "a", layout: {i: "a", x: 0, y: 0, w: 1, h: 2 }},
         { cellId: "b", layout: {i: "b", x: 1, y: 0, w: 3, h: 2, minW: 2, maxW: 4 }},

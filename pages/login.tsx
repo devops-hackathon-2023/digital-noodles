@@ -6,8 +6,6 @@ export default function LoginPage() {
     const { data: session } = useSession()
     const { data: test } = useSWR("/api/test", fetcher)
 
-    console.log(test);
-
     if (session) {
         return (
             <>
