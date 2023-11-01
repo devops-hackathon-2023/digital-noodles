@@ -22,7 +22,8 @@ class DashboardConfigService {
         return prisma.dashboardConfig.findMany({
             where: {
                 typeId: typeId,
-                dashboardType: dashboardType
+                dashboardType: dashboardType,
+                userId: this.authContext.getUser()?.id
             }, include: {
                 dashboardCells: true
             }
@@ -42,7 +43,11 @@ class DashboardConfigService {
         const avgBuildTimeCell = await prisma.dashboardCell.create({
             data: {
                 dashboardConfigId: dashboardConfig.id,
-                statType: "STATS_AVG_BUILD_TIME"
+                statType: "STATS_AVG_BUILD_TIME",
+                x: 0,
+                y: 0,
+                w: 2,
+                h: 2
             }
         })
 

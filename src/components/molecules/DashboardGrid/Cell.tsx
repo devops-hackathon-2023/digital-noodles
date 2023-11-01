@@ -1,15 +1,21 @@
 import React from 'react';
+import useSWR from "swr";
+import fetcher from "@/utils/fetcher";
 
 interface CellProps {
-    cellId: string,
+    id: string,
     w: number,
     h: number
 }
 
-const Cell: React.FC<CellProps> = ({ cellId, w, h}) => {
+const Cell: React.FC<CellProps> = ({ id }) => {
+    const { data } = useSWR(`/api/dashboard-cells/${id}/data`, fetcher);
+
+    console.log(data);
+
     return (
         <div>
-
+            Avg build time: { data.avg }
         </div>
     );
 };

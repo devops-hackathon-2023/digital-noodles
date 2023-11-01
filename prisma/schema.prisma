@@ -92,4 +92,8 @@ model DashboardCell {
     dashboardConfigId String
     dashboardConfig   DashboardConfig @relation(fields: [dashboardConfigId], references: [id])
     statType          StatType
+    x                 Int
+    y                 Int
+    w                 Int
+    h                 Int
 }

@@ -4,6 +4,7 @@ import GridLayout, {Layout} from "react-grid-layout";
 import {DashboardGridCellConfig} from "@/utils/types";
 import { v4 as uuidv4 } from 'uuid';
 import classNames from "classnames"
+import Cell from "@/components/molecules/DashboardGrid/Cell";
 
 interface DashboardGridProps {
     layout: DashboardGridCellConfig[]
@@ -45,7 +46,7 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({ layout, onLayoutChange })
             <SizeMe>
                 {({ size }) => <GridLayout
                     className="layout"
-                    layout={layout.map(cell => cell.layout)}
+                    layout={layout.map(cell => ({ i: cell.id, x: cell.x, y: cell.y, w: cell.w, h: cell.h}))}
                     cols={12}
                     rowHeight={30}
                     width={size.width ? size.width : 1200}
@@ -55,12 +56,13 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({ layout, onLayoutChange })
                 >
                     {
                         layout.map((datagridCellConfig) => <div
-                            key={datagridCellConfig.layout.i}
+                            key={datagridCellConfig.id}
                             className={classNames('border bg-white transition-[top] duration-200 relative ease-in-out', {'-top-2 drop-shadow': editing, 'top-0': !editing})}>
                             {
                                 editing && <div className={classNames('absolute', 'top-0.5', 'right-0.5')}>Delete</div>
                             }
-                            {datagridCellConfig.layout.i}
+                            <Cell id={datagridCellConfig.id} w={datagridCellConfig.w} h={datagridCellConfig.h}/>
+                            {datagridCellConfig.id}
                         </div>)
                     }
                 </GridLayout>
