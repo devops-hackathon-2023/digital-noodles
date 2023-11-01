@@ -2,6 +2,7 @@ import {Input} from "@/components/ui/input";
 import {ProfileDropdownMenu} from "@/components/organisms/profile-dropdown-menu";
 import {ModeToggle} from "@/components/ui/mode-toggle";
 import {usePathname} from "next/navigation";
+import Link from "next/link";
 
 const Header = () => {
   const pathname = usePathname()
@@ -15,7 +16,7 @@ const Header = () => {
     <header
       className="sticky top-0 z-50 w-full border-b">
       <div className="container flex h-14 items-center justify-between">
-        <strong>DOPO</strong>
+        <Link href={"/"}><strong>DOPO</strong></Link>
         <div className={"flex gap-4 items-center"}>
           <Input placeholder={"Search..."} className={'w-full'}/>
           <div className={"flex-shrink-0"}>

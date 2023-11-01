@@ -3,7 +3,7 @@ type IconProps = React.HTMLAttributes<SVGElement>
 export const Icons = {
   logo: (props: IconProps) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" {...props}>
-      <rect width="256" height="256" fill="none" />
+      <rect width="256" height="256" fill="none"/>
       <line
         x1="208"
         y1="128"
@@ -36,7 +36,8 @@ export const Icons = {
       width="23"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" />
+      <path
+        d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z"/>
     </svg>
   ),
   gitHub: (props: IconProps) => (
@@ -62,7 +63,8 @@ export const Icons = {
   ),
   aria: (props: IconProps) => (
     <svg role="img" viewBox="0 0 24 24" fill="currentColor" {...props}>
-      <path d="M13.966 22.624l-1.69-4.281H8.122l3.892-9.144 5.662 13.425zM8.884 1.376H0v21.248zm15.116 0h-8.884L24 22.624Z" />
+      <path
+        d="M13.966 22.624l-1.69-4.281H8.122l3.892-9.144 5.662 13.425zM8.884 1.376H0v21.248zm15.116 0h-8.884L24 22.624Z"/>
     </svg>
   ),
   npm: (props: IconProps) => (
@@ -142,7 +144,39 @@ export const Icons = {
       strokeLinejoin="round"
       {...props}
     >
-      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+      <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
     </svg>
   ),
+  success: (props: IconProps) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 18 18">
+      <rect width="18" height="18" fill="#55D640" rx="9"/>
+      <path stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+            d="M12.333 6.5 7.75 11.083 5.667 9"/>
+    </svg>
+  ),
+  failed: (props: IconProps) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" fill="none" viewBox="0 0 19 18">
+      <rect width="18" height="18" x=".667" fill="#D64040" rx="9"/>
+      <path stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+            d="m12.167 6.5-5 5m0-5 5 5"/>
+    </svg>
+  ),
+  running:(props:IconProps)=> (
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 18 18">
+      <rect width="18" height="18" fill="#3B82F6" rx="9"/>
+      <g clipPath="url(#a)">
+        <path stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"
+              d="M12.75 4.833v2.5h-2.5"/>
+        <path stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"
+              d="M5.25 9a3.75 3.75 0 0 1 6.25-2.792l1.25 1.125m-7.5 5.834v-2.5h2.5"/>
+        <path stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"
+              d="M12.75 9a3.75 3.75 0 0 1-6.25 2.792l-1.25-1.125"/>
+      </g>
+      <defs>
+        <clipPath id="a">
+          <path fill="#fff" d="M4 4h10v10H4z"/>
+        </clipPath>
+      </defs>
+    </svg>
+  )
 }

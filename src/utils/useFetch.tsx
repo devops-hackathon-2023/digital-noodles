@@ -15,10 +15,9 @@ const fetcher = async (url: string) => {
 const useFetch = (path: string) => {
   const {
     data,
-    error
+    error,
+    isLoading
   } = useSWR(`${url}/${path}`, fetcher);
-
-  const isLoading = !data && !error;
 
   return {
     data,
