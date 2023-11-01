@@ -1,8 +1,13 @@
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Progress} from "@/components/ui/progress";
+import useFetch from "@/utils/useFetch";
 
 export default function Home() {
+  const {data: deployments} = useFetch("sases?page=0&size=30&sort=name&order=asc")
+
+  console.log(deployments)
+
   return (
     <div className="container relative mt-5 flex flex-col gap-5">
       <div className={"flex w-full justify-between items-center"}>
