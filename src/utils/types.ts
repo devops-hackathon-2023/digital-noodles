@@ -1,13 +1,7 @@
 export interface DashboardGridCellConfig {
-  layout: {
-    i: string,
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    minW?: number,
-    maxW?: number
-  }
+    id: string,
+    statType: string,
+    x: number, y: number, w: number, h: number
 }
 
 export interface FinishDeploymentRequest {
