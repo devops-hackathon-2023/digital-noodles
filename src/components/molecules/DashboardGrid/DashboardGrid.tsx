@@ -13,6 +13,10 @@ interface DashboardGridProps {
     onCellDelete: (cellId: string) => void
 }
 
+const MinWMinHDict = {
+    "STATS_AVG_BUILD_TIME": { minW: 2, minH: 2, maxW: 2, maxH: 2 }
+}
+
 const DashboardGrid: React.FC<DashboardGridProps> = ({ dashboardConfigId, layout, onLayoutChange }) => {
     const [editing, setEditing] = useState(false)
     const [draggedStatType, setDraggedStatType] = useState<string | undefined>(undefined)
@@ -27,14 +31,17 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({ dashboardConfigId, layout
                     statType: draggedStatType,
                     x: layoutItem.x,
                     y: layoutItem.y,
-                    w: layoutItem.w,
-                    h: layoutItem.h
+                    ...{
+                        //@ts-ignore
+                        w: MinWMinHDict[draggedStatType].minW,
+                        //@ts-ignore
+                        h: MinWMinHDict[draggedStatType].minH
+                    }
                 }
         ]);
     };
 
     const handleLayoutChange = (gridLayout: Layout[]) => {
-        console.log("Layout change")
         const newLayout: any[] = []
         gridLayout.forEach((gridLayoutCell) => {
             console.log(gridLayout)
@@ -56,6 +63,10 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({ dashboardConfigId, layout
 
     const onDelete = (dataCellId: string) => {
         onLayoutChange(dashboardConfigId, layout.filter((dashboardCell) => dashboardCell.id !== dataCellId))
+    }
+
+    const prepareDatGridCell = (dashboardCell: DashboardGridCellConfig) => {
+        return { i: dashboardCell.id, x: dashboardCell.x, y: dashboardCell.y, w: dashboardCell.w, h: dashboardCell.h, static: !editing, ...MinWMinHDict["STATS_AVG_BUILD_TIME"] }
     }
 
     return (
@@ -98,9 +109,11 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({ dashboardConfigId, layout
             <SizeMe>
                 {({ size }) => <GridLayout
                     className="layout"
-                    layout={layout.map(cell => ({ i: cell.id, x: cell.x, y: cell.y, w: cell.w, h: cell.h}))}
+                    layout={layout.map(prepareDatGridCell)}
                     cols={12}
-                    rowHeight={30}
+                    containerPadding={[0, 0]}
+                    margin={[ 8, 8 ]}
+                    rowHeight={size.width ? (size.width - 11 * 8) / 12 : 30}
                     width={size.width ? size.width : 1200}
                     onDrop={onDrop}
                     onLayoutChange={handleLayoutChange}
@@ -109,12 +122,11 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({ dashboardConfigId, layout
                     {
                         layout.map((datagridCellConfig) => <div
                             key={datagridCellConfig.id}
-                            className={classNames('border bg-white transition-[top] duration-200 relative ease-in-out', {'-top-2 drop-shadow': editing, 'top-0': !editing})}>
+                            className={classNames({'-top-2 drop-shadow': editing, 'top-0': !editing})}>
                             {
                                 editing && <div onClick={() => onDelete(datagridCellConfig.id)} className={classNames('absolute', 'top-0.5', 'right-0.5')}>Delete</div>
                             }
                             <Cell id={datagridCellConfig.id} w={datagridCellConfig.w} h={datagridCellConfig.h}/>
-                            {datagridCellConfig.id}
                         </div>)
                     }
                 </GridLayout>
