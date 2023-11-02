@@ -1,9 +1,7 @@
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Progress} from "@/components/ui/progress";
-import useFetch from "@/utils/useFetch";
 import {Icons} from "@/components/icons";
-import {useRouter} from 'next/navigation';
 import Link from "next/link";
 
 const deployments = [
@@ -43,12 +41,8 @@ const cards = [
 ];
 
 export default function Home() {
-  const {data} = useFetch("sases?page=0&size=30&sort=name&order=asc")
-
-  console.log(data)
-
   return (
-    <div className="container relative mt-5 flex flex-col gap-5">
+    <div className="relative flex flex-col gap-5">
 
       {/* Header */}
       <div className="flex w-full justify-between items-center">
@@ -114,8 +108,8 @@ const DetailedCard = ({
       </CardTitle>
     </CardHeader>
     <CardContent className="flex-col flex gap-5">
-      {[...Array(3)].map(() => (
-        <div className="flex items-center justify-between">
+      {[...Array(3)].map((value, index, array) => (
+        <div className="flex items-center justify-between" key={index}>
           <div className="flex w-full items-center gap-20">
             <div className="flex flex-col flex-shrink-0">
               <div className="font-medium">loans</div>
@@ -145,8 +139,8 @@ const SasesList = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-col flex gap-5">
-        {[...Array(3)].map(() => (
-          <div className="flex items-center justify-between">
+        {[...Array(3)].map((value, index, array) => (
+          <div className="flex items-center justify-between" key={index}>
             <div className="flex w-full items-center gap-20">
               <div className="flex flex-col flex-shrink-0">
                 <div className="font-medium">loans</div>

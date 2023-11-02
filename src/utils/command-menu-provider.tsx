@@ -33,24 +33,24 @@ const CommandMenuProvider = ({children}: {
         <CommandInput placeholder="Type a command or search..."/>
         <CommandList>
           <CommandGroup heading="Suggestions">
-            <CommandItem>
-              <span>Calendar</span>
-            </CommandItem>
-            <CommandItem>
-              <span>Search Emoji</span>
-            </CommandItem>
-            <CommandItem>
-              <span>Calculator</span>
-            </CommandItem>
-          </CommandGroup>
-          <CommandSeparator />
-          <CommandGroup heading="Settings">
-            <CommandItem>
-              <span>Profile</span>
-            </CommandItem>
-            <CommandItem>
-              <span>Settings</span>
-            </CommandItem>
+          {/*  <CommandItem>*/}
+          {/*    <span>Calendar</span>*/}
+          {/*  </CommandItem>*/}
+          {/*  <CommandItem>*/}
+          {/*    <span>Search Emoji</span>*/}
+          {/*  </CommandItem>*/}
+          {/*  <CommandItem>*/}
+          {/*    <span>Calculator</span>*/}
+          {/*  </CommandItem>*/}
+          {/*</CommandGroup>*/}
+          {/*<CommandSeparator />*/}
+          {/*<CommandGroup heading="Settings">*/}
+          {/*  <CommandItem>*/}
+          {/*    <span>Profile</span>*/}
+          {/*  </CommandItem>*/}
+          {/*  <CommandItem>*/}
+          {/*    <span>Settings</span>*/}
+          {/*  </CommandItem>*/}
           </CommandGroup>
         </CommandList>
       </CommandDialog>

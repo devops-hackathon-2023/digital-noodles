@@ -1,4 +1,5 @@
 import useSWR from 'swr';
+import {PageResponseSasResponse, SasResponse} from "@/utils/types";
 
 
 const url = process.env.NEXT_PUBLIC_BACKEND_URL!
@@ -12,7 +13,7 @@ const fetcher = async (url: string) => {
   return response.json();
 };
 
-const useFetch = (path: string) => {
+const useFetch = <T>(path: string) => {
   const {
     data,
     error,
@@ -20,7 +21,7 @@ const useFetch = (path: string) => {
   } = useSWR(`${url}/${path}`, fetcher);
 
   return {
-    data,
+    data: data as T,
     error,
     isLoading
   };

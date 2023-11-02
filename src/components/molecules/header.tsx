@@ -4,9 +4,12 @@ import {ModeToggle} from "@/components/ui/mode-toggle";
 import {usePathname} from "next/navigation";
 import Link from "next/link";
 import TeamSwitcher from "@/components/organisms/team-switcher";
-import {Keyboard, Menu, Settings, User} from "lucide-react";
+import {Menu, Settings, User} from "lucide-react";
+import {LayoutDashboard} from 'lucide-react';
+import {Package} from 'lucide-react';
+import {Puzzle} from 'lucide-react';
+
 import {Button} from "@/components/ui/button";
-import {useCallback, useState} from "react";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTrigger} from "@/components/ui/sheet";
 import {Separator} from "@/components/ui/separator";
@@ -14,16 +17,6 @@ import {Separator} from "@/components/ui/separator";
 const Header = () => {
   const pathname = usePathname()
   const isLoginPage = pathname === '/login';
-
-  const [isOpen, setOpen] = useState(false)
-
-  const handleClose = useCallback(() => {
-    setOpen(false)
-  }, [])
-
-  const handleBottomSheet = useCallback(() => {
-    setOpen(prevState => !prevState)
-  }, [])
 
   if (isLoginPage) {
     return null;
@@ -37,7 +30,19 @@ const Header = () => {
           <div className="container flex h-14 items-center justify-between">
             <div className={"flex items-center gap-5"}>
               <Link href={"/"}><strong>DOPO</strong></Link>
-              <TeamSwitcher className={"hidden sm:flex"}/>
+              <div className={"hidden sm:flex items-center gap-2"}>
+                <TeamSwitcher/>
+                <Link href={"/app-modules"}>
+                  <Button variant={pathname === "/app-modules" ? "secondary" : "ghost"} className={"box-border"}>
+                    App modules
+                  </Button>
+                </Link>
+                <Link href={"/deployment-units"}>
+                  <Button variant={pathname === "/deployment-units" ? "secondary" : "ghost"} className={"box-border"}>
+                    Deployment units
+                  </Button>
+                </Link>
+              </div>
             </div>
             <div className={"flex sm:gap-4 items-center gap-2"}>
               <Input placeholder={"Search..."} className={'w-full'}/>
@@ -46,7 +51,7 @@ const Header = () => {
               </div>
               <ProfileDropdownMenu className={"hidden sm:flex"}/>
               <SheetTrigger asChild>
-                <Button className={"sm:hidden"} onClick={handleBottomSheet}>
+                <Button className={"sm:hidden"}>
                   <Menu/>
                 </Button>
               </SheetTrigger>
@@ -54,15 +59,16 @@ const Header = () => {
           </div>
         </header>
         <SheetContent side={'bottom'}>
-          <SheetHeader>
-            <div className={"flex w-full justify-between items-center pr-4"}>
-              <div className={"font-bold"}>My Account</div>
-              <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png"/>
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-            </div>
+          <SheetHeader className={"flex items-start mb-4"}>
+            <ModeToggle/>
           </SheetHeader>
+          <div className={"flex w-full justify-between items-center pr-4"}>
+            <div className={"font-bold"}>My Account</div>
+            {/*<Avatar>*/}
+            {/*  <AvatarImage src="https://github.com/shadcn.png"/>*/}
+            {/*  <AvatarFallback>CN</AvatarFallback>*/}
+            {/*</Avatar>*/}
+          </div>
           <div className="flex flex-col gap-4 py-4">
             <Separator/>
             <div className={"flex items-center gap-2"}>
@@ -73,13 +79,27 @@ const Header = () => {
               <Settings className="mr-2 h-4 w-4"/>
               <span>Settings</span>
             </div>
-            <Separator/>
-            <ModeToggle/>
           </div>
           <SheetFooter>
-            <SheetClose asChild>
+            <div className="flex flex-col gap-5 py-4">
+              <div className={"flex w-full justify-between items-center pr-4"}>
+                <div className={"font-bold"}>Navigations</div>
+              </div>
+              <Separator/>
+              <Link href={"/"} className={"flex items-center gap-2"}>
+                <LayoutDashboard className="mr-2 h-4 w-4"/>
+                <span>Dashboard</span>
+              </Link>
+              <Link href={"/app-modules"} className={"flex items-center gap-2"}>
+                <Puzzle className="mr-2 h-4 w-4"/>
+                <span>App modules</span>
+              </Link>
+              <Link href={"/deployment-units"} className={"flex items-center gap-2"}>
+                <Package className="mr-2 h-4 w-4"/>
+                <span>Deployment units</span>
+              </Link>
               <TeamSwitcher className={"w-full"}/>
-            </SheetClose>
+            </div>
           </SheetFooter>
         </SheetContent>
       </Sheet>
