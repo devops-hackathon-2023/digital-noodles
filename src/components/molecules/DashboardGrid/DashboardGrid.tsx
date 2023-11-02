@@ -11,16 +11,15 @@ interface DashboardGridProps {
     layout: DashboardGridCellConfig[]
     onLayoutChange: (dashboardConfigId: string, layout: any[]) => void
     onCellDelete: (cellId: string) => void
+    draggedStatType: string | undefined
+    editing: boolean
 }
 
 const MinWMinHDict = {
     "STATS_AVG_BUILD_TIME": { minW: 2, minH: 2, maxW: 2, maxH: 2 }
 }
 
-const DashboardGrid: React.FC<DashboardGridProps> = ({ dashboardConfigId, layout, onLayoutChange }) => {
-    const [editing, setEditing] = useState(false)
-    const [draggedStatType, setDraggedStatType] = useState<string | undefined>(undefined)
-
+const DashboardGrid: React.FC<DashboardGridProps> = ({ dashboardConfigId, layout, onLayoutChange, draggedStatType, editing }) => {
     const onDrop = (_, layoutItem, _event) => {
         const modifiedObject = { ...layoutItem, i: uuidv4() };
         console.log(_event);
@@ -71,41 +70,6 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({ dashboardConfigId, layout
 
     return (
         <>
-            <button type={"button"} onClick={() => setEditing((editing) => !editing)}>Edit</button>
-            <div className={"flex gap-2"}>
-            <div
-                className="droppable-element"
-                style={{ padding: "32px", backgroundColor: "red", width: "120px" }}
-                draggable={true}
-                unselectable="on"
-                // this is a hack for firefox
-                // Firefox requires some kind of initialization
-                // which we can do by adding this attribute
-                // @see https://bugzilla.mozilla.org/show_bug.cgi?id=568313
-                onDragStart={e => {
-                    e.dataTransfer.setData("text/plain", "")
-                    setDraggedStatType("STATS_AVG_BUILD_TIME")
-                }}
-            >
-                STATS_AVG_BUILD_TIME
-            </div>
-                <div
-            className="toolbox-item"
-            style={{ padding: "32px", backgroundColor: "red", width: "120px" }}
-            draggable={true}
-            unselectable="on"
-            // this is a hack for firefox
-            // Firefox requires some kind of initialization
-            // which we can do by adding this attribute
-            // @see https://bugzilla.mozilla.org/show_bug.cgi?id=568313
-            onDragStart={e => {
-                e.dataTransfer.setData("text/plain", "")
-                setDraggedStatType("STATS_LAST_DEPLOYMENT_BUILD_TIME")
-            }}
-        >
-                    STATS_LAST_DEPLOYMENT_BUILD_TIME (Does not work)
-        </div>
-            </div>
             <SizeMe>
                 {({ size }) => <GridLayout
                     className="layout"

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {NextPage, NextPageContext} from "next";
 import GridLayout from "react-grid-layout";
 import 'react-grid-layout/css/styles.css'
@@ -19,7 +19,8 @@ import {
     DropdownMenuSubTrigger
 } from '@/components/ui/dropdown-menu';
 import { DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import {AreaChart, Blocks, Cpu, HeartPulse, MemoryStick, UserPlus} from "lucide-react";
+import {AreaChart, Blocks, Cpu, Hand, HeartPulse, MemoryStick, UserPlus} from "lucide-react";
+import useOutsideClick from "@/utils/useOutsideClick";
 
 interface DeploymentUnitPageProps {
     deploymentUnitId: string
@@ -27,7 +28,12 @@ interface DeploymentUnitPageProps {
 
 const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({ deploymentUnitId }) => {
     const { data: dashboardConfigs, mutate: mutateDashboardConfigs } = useSWR<any>(`/api/dashboard-configs?typeId=${deploymentUnitId}&dashboardType=DEPLOYMENT_UNIT`, fetcher)
-    // const { data: deploymentUnit } = useSWR<any>('')
+    const [draggedStatType, setDraggedStatType] = useState<string | undefined>(undefined)
+    const [dropdownMenuOpen, setDropdownMenuOpen] = useState(false)
+    const [editing, setEditing] = useState(false)
+
+    const wrapperRef = useRef(null);
+    useOutsideClick(wrapperRef, () => setDropdownMenuOpen(false));
 
     const handleLayoutChange = (dashboardConfigId: string, layout: any[]) => {
         axios.put(`/api/dashboard-configs/${dashboardConfigId}`, { dashboardCellConfigs: layout }, { withCredentials: true })
@@ -56,12 +62,15 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({ deploymentUnitI
                             }
                         </TabsList>
 
-                            <DropdownMenu>
+                            { !editing && <Button variant={'secondary'} onClick={() => setEditing(true)}>Edit</Button> }
+                            { editing && <div className={"flex gap-2"}>
+                                <Button variant={'secondary'} onClick={() => setEditing(false)}>Done</Button>
+                            <DropdownMenu open={dropdownMenuOpen}>
                                 <DropdownMenuTrigger>
-                                    <Button variant={'secondary'}>Edit</Button>
+                                    <Button variant={'secondary'} onClick={() => setDropdownMenuOpen(true)}>Add</Button>
                                 </DropdownMenuTrigger>
 
-                                <DropdownMenuContent className="w-56">
+                                <DropdownMenuContent ref={wrapperRef}>
                                     <DropdownMenuSub>
                                         <DropdownMenuSubTrigger>
                                             <HeartPulse className="mr-2 h-4 w-4"/>
@@ -92,19 +101,37 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({ deploymentUnitI
                                         <DropdownMenuSubContent>
                                             <DropdownMenuItem>
                                                 <Blocks className={"mr-2 h-4 w-4"}/>
-                                                Average build time
+                                                <div
+                                                    className="droppable-element"
+                                                    draggable={true}
+                                                    unselectable="on"
+                                                    // this is a hack for firefox
+                                                    // Firefox requires some kind of initialization
+                                                    // which we can do by adding this attribute
+                                                    // @see https://bugzilla.mozilla.org/show_bug.cgi?id=568313
+                                                    onDragStart={e => {
+                                                        e.dataTransfer.setData("text/plain", "")
+                                                        setDraggedStatType("STATS_AVG_BUILD_TIME")
+                                                        setDropdownMenuOpen(false)
+                                                    }}
+                                                >
+                                                    Average build time
+                                                </div>
+                                                <Hand className={"ml-6 h-4 w-4"}/>
                                             </DropdownMenuItem>
                                         </DropdownMenuSubContent>
                                         </DropdownMenuPortal>
                                     </DropdownMenuSub>
                                 </DropdownMenuContent>
                             </DropdownMenu>
+                            </div>
+                            }
                         </div>
 
                         {
                             dashboardConfigs.map((layout: any) => <>
                                 <TabsContent value={layout.env}>
-                                    <DashboardGrid dashboardConfigId={layout.id} layout={layout.dashboardCells} onLayoutChange={handleLayoutChange} onCellDelete={() => {}}/>
+                                    <DashboardGrid editing={editing} dashboardConfigId={layout.id} draggedStatType={draggedStatType} layout={layout.dashboardCells} onLayoutChange={handleLayoutChange} onCellDelete={() => {}}/>
                                 </TabsContent>
                             </>)
                         }
