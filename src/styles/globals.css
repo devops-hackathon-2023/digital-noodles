@@ -66,6 +66,7 @@
     --rsbs-mr: env(safe-area-inset-right);
     --rsbs-overlay-rounded: 100px;
   }
+
 }
 
 
@@ -82,4 +83,9 @@
   .container {
     @apply px-4;
   }
+}
+
+
+.react-grid-item.react-grid-placeholder {
+  background-color: white !important;
 }
