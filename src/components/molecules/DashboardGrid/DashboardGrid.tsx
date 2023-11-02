@@ -87,10 +87,15 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({ dashboardConfigId, layout
                         layout.map((datagridCellConfig) => <div
                             key={datagridCellConfig.id}
                             className={classNames({'-top-2 drop-shadow': editing, 'top-0': !editing})}>
+                            <div className={classNames("w-full h-full origin-center", { 'animate-shake': editing })}>
                             {
-                                editing && <div onClick={() => onDelete(datagridCellConfig.id)} className={classNames('absolute', 'top-0.5', 'right-0.5')}>Delete</div>
+                                editing && <div onClick={(e) => {
+                                    e.preventDefault()
+                                    onDelete(datagridCellConfig.id)
+                                }} className={classNames('absolute', 'top-0.5', 'right-0.5', 'z-999')}>Delete</div>
                             }
                             <Cell id={datagridCellConfig.id} w={datagridCellConfig.w} h={datagridCellConfig.h}/>
+                            </div>
                         </div>)
                     }
                 </GridLayout>

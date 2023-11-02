@@ -1,3 +1,5 @@
+const plugin = require('tailwindcss/plugin')
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -65,15 +67,46 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: 0 },
         },
+        "shake": {
+          "0%, 100%": {
+            transform: 'translate(0)'
+          },
+          "25%": {
+            transform: 'translate(-1px, 1px) rotate(-0.5deg)'
+          },
+          "50%": {
+            transform: 'translate(1px, -1px) rotate(0.5deg)'
+          },
+          "75%": {
+            transform: 'translate(-1px, 1px) rotate(-0.5deg)'
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        'shake': 'shake 0.2s linear infinite'
       },
       transitionProperty: {
         'position': 'top'
       }
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+      require("tailwindcss-animate"),
+    plugin(({ matchUtilities, theme }) => {
+      matchUtilities(
+          {
+            "animation-delay": (value) => {
+              return {
+                "animation-delay": value,
+              };
+            },
+          },
+          {
+            values: theme("transitionDelay"),
+          }
+      );
+    }),
+  ],
 }
