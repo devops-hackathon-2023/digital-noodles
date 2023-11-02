@@ -15,8 +15,12 @@ import {
 } from "@/components/ui/dropdown-menu"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {cn} from "@/lib/utils";
+import {signOut} from "next-auth/react";
+import {useRouter} from "next/router";
 
 export function ProfileDropdownMenu({className}: any) {
+  const router = useRouter();
+
   return (
     <div className={cn(className)}>
       <DropdownMenu>
@@ -79,7 +83,10 @@ export function ProfileDropdownMenu({className}: any) {
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator/>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => {
+            signOut()
+            router.replace("/login")
+          }}>
             <LogOut className="mr-2 h-4 w-4"/>
             <span>Log out</span>
             <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>

@@ -2,17 +2,20 @@
 
 import * as React from "react"
 
-import { cn } from "@/lib/utils"
-import { Input } from "../ui/input"
+import {cn} from "@/lib/utils"
+import {Input} from "../ui/input"
 import {Button} from "@/components/ui/button";
-import { Label } from "../ui/label";
-import { Icons } from "../icons";
+import {Label} from "../ui/label";
+import {Icons} from "../icons";
+import {signIn} from "next-auth/react";
+import {useRouter} from "next/router";
 
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { providers: object }
 
-export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
+export function UserAuthForm({ className, providers, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const router = useRouter();
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault()
@@ -59,14 +62,21 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           </span>
         </div>
       </div>
-      <Button variant="outline" type="button" disabled={isLoading}>
-        {isLoading ? (
-          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <Icons.gitHub className="mr-2 h-4 w-4" />
-        )}{" "}
-        Github
-      </Button>
+      {
+        Object.values(providers).map((provider) => (
+            <Button variant="outline" type="button" disabled={isLoading} onClick={() => {
+              setIsLoading(true)
+              signIn(provider.id).then(() => (router.replace("/")))
+            }}>
+              {isLoading ? (
+                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                  <Icons.gitHub className="mr-2 h-4 w-4" />
+              )}{" "}
+              Github
+            </Button>
+        ))
+      }
     </div>
   )
 }

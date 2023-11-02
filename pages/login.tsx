@@ -5,8 +5,13 @@ import {buttonVariants} from "@/components/ui/button";
 import Image from "next/image";
 import collaboration from "../public/colab.png"
 import dopo from "../public/dopo_portal.png"
+import {GetServerSidePropsContext, InferGetServerSidePropsType, NextPage} from "next";
+import {getServerSession} from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]"
+import {getProviders} from "next-auth/react";
+import React from "react";
 
-const Login = () => {
+const Login: NextPage<{ providers: object }> = ({ providers })  => {
   return (
     <div
       className="container relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
@@ -38,11 +43,27 @@ const Login = () => {
               Enter your email below to create your account
             </p>
           </div>
-          <UserAuthForm/>
+          <UserAuthForm providers={providers}/>
         </div>
       </div>
     </div>
   )
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+    const session = await getServerSession(context.req, context.res, authOptions)
+
+    // If the user is already logged in, redirect.
+    // Note: Make sure not to redirect to the same page
+    // To avoid an infinite loop!
+    if (session) {
+        return { redirect: { destination: "/" } }
+    }
+    const providers = await getProviders()
+
+    return {
+        props: { providers: providers ?? [] },
+    }
 }
 
 export default Login
