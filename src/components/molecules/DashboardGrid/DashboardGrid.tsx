@@ -19,7 +19,7 @@ interface DashboardGridProps {
 const MinWMinHDict = {
     [StatType.STATS_AVG_BUILD_TIME]: { minW: 1, minH: 1, maxW: 2, maxH: 2 },
     [StatType.SYSTEM_CPU_USAGE]: { minW: 1, minH: 1, maxW: 6, maxH: 3 },
-    [StatType.SYSTEM_RAM_USAGE]: { minW: 1, minH: 1, maxW: 6, maxH: 3 }
+    [StatType.SYSTEM_RAM_USAGE]: { minW: 2, minH: 2, maxW: 6, maxH: 3 }
 }
 
 const DashboardGrid: React.FC<DashboardGridProps> = ({ dashboardConfigId, layout, onLayoutChange, draggedStatType, editing }) => {

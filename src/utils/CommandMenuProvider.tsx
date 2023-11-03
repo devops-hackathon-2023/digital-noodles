@@ -1,19 +1,33 @@
 import {ReactElement, useEffect, useState} from "react";
 import {
   CommandDialog,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList, CommandSeparator
 } from "@/components/atoms/command";
-import {Input} from "@/components/atoms/input";
-import {Smile} from "lucide-react";
+import axios from "axios";
+import className from "classnames";
+import Link from "next/link";
+import {Boxes, Package} from "lucide-react";
 
 const CommandMenuProvider = ({children}: {
   children: ReactElement
 }) => {
   const [open, setOpen] = useState(false)
+  const [searchResults, setSearchResults] = useState([]);
+  const handleSearch = (query: string) => {
+    axios.get('/api/search', {
+      params: { query }
+    })
+        .then(response => response.data)
+        .then(setSearchResults);
+  }
+
+  useEffect(() => {
+    console.log(searchResults)
+  }, [searchResults]);
+
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -26,33 +40,75 @@ const CommandMenuProvider = ({children}: {
     return () => document.removeEventListener("keydown", down)
   }, [])
 
+  const constructHref = (item: any) => {
+    if(item.type === "SAS")
+      return `/sases/${item.data.id}`
+
+    if(item.type === "DEPLOYMENT_UNIT")
+      return `/deployment-units/${item.data.id}`
+
+    return "/"
+  }
+
+  const getIcon = (item: any) => {
+    if(item.type === "SAS")
+      return <Package className={"w-2 h-2"}/>
+
+    if(item.type === "DEPLOYMENT_UNIT")
+      return <Boxes className={"w-2 h-2"}/>
+
+    return <div>No icon</div>
+  }
+
+  const getLabel = (item: any) => {
+    if(item.type === "SAS")
+      return "SAS"
+
+    if(item.type === "DEPLOYMENT_UNIT")
+      return "Deployment Unit"
+
+    return "Unknown"
+
+  }
+
   return (
     <>
       {children}
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type a command or search..."/>
+        <CommandInput onValueChange={handleSearch} placeholder="Type the name of what you are looking for..."/>
         <CommandList>
           <CommandGroup heading="Suggestions">
             <CommandItem>
-              <span>Calendar</span>
+              <span>SASes</span>
             </CommandItem>
             <CommandItem>
-              <span>Search Emoji</span>
+              <span>App Modules</span>
             </CommandItem>
             <CommandItem>
-              <span>Calculator</span>
-            </CommandItem>
-          </CommandGroup>
-          <CommandSeparator />
-          <CommandGroup heading="Settings">
-            <CommandItem>
-              <span>Profile</span>
-            </CommandItem>
-            <CommandItem>
-              <span>Settings</span>
+              <span>Deployment Units</span>
             </CommandItem>
           </CommandGroup>
         </CommandList>
+        {
+            searchResults.length > 0 && <><CommandSeparator/>
+              <CommandList>
+                <CommandGroup>
+                  {
+                    searchResults.slice(0,10).map((searchResult: any) => <Link href={constructHref(searchResult)} onClick={() => setOpen(false)}>
+                      <CommandItem className={"flex gap-2"}>
+                        <div>{searchResult.label}</div>
+                        <div className={"w-1 h-1 bg-foreground rounded-xl"}></div>
+                        <div className={"flex gap-2"}>
+                          { getIcon(searchResult) }
+                          <div className={className("text-sm")}>{ getLabel(searchResult) }</div>
+                        </div>
+                      </CommandItem>
+                    </Link>)
+                  }
+                </CommandGroup>
+              </CommandList>
+            </>
+        }
       </CommandDialog>
     </>
   )
