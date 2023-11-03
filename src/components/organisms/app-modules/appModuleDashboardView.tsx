@@ -1,19 +1,34 @@
-import {AppModuleResponse, DeploymentUnitResponse, PageResponseDeploymentUnitResponse} from "@/utils/types";
-import Link from "next/link";
+import {AppModuleResponse, PageResponseDeploymentUnitResponse} from "@/utils/types";
 import {NextPage} from "next";
 import {Button} from "@/components/atoms/button";
-import {Separator} from "@/components/atoms/separator";
+import {columns} from "@/components/organisms/deployment-units/deploymentUnitsDataTable/columns";
+import {
+  DeploymentUnitsDataTable
+} from "@/components/organisms/deployment-units/deploymentUnitsDataTable/deploymentUnitsDataTable";
 
 interface AppModuleDashboardViewProps {
   deploymentUnits?: PageResponseDeploymentUnitResponse,
-  appModule?: AppModuleResponse
-
+  appModule?: AppModuleResponse,
+  dataTablePageSize: number,
+  handleTableSize: (size: number) => void,
+  handleTablePage: (page: number) => void,
 }
 
 const AppModuleDashboardView: NextPage<AppModuleDashboardViewProps> = ({
                                                                          deploymentUnits,
-                                                                         appModule
+                                                                         appModule,
+                                                                         dataTablePageSize,
+                                                                         handleTableSize,
+                                                                         handleTablePage
                                                                        }) => {
+
+  if (deploymentUnits === undefined) {
+    return (
+      <div>
+        Loading...
+      </div>
+    )
+  }
 
   return (
     <div className="relative flex flex-col gap-5">
@@ -36,16 +51,15 @@ const AppModuleDashboardView: NextPage<AppModuleDashboardViewProps> = ({
             Add new Deployment unit
           </Button>
         </div>
-        <Separator/>
-        {deploymentUnits?.page.map((d: DeploymentUnitResponse, index: number) => {
-          return (
-            <div key={index}>
-              <Link href={`/deployment-units/${d.id}`}>
-                {d.name}
-              </Link>
-            </div>
-          )
-        })}
+        <DeploymentUnitsDataTable
+          data={deploymentUnits.page}
+          columns={columns}
+          pageCount={deploymentUnits.pageCount}
+          pageSize={dataTablePageSize}
+          pageNumber={deploymentUnits.pageNumber}
+          handleTableSize={handleTablePage}
+          handleTablePage={handleTableSize}
+        />
       </div>
     </div>
   )

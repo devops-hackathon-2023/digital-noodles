@@ -151,3 +151,41 @@ export enum StatType {
   STATS_LAST_DEPLOYMENT_BUILD_TIME = "STATS_LAST_DEPLOYMENT_BUILD_TIME",
   STATS_GATES_FAILED_PASSED = "STATS_GATES_FAILED_PASSED",
 }
+
+export enum SortType{
+  ASC="asc",
+  DESC="desc"
+}
+
+export const languages = [
+  {
+    value: "JAVASCRIPT",
+    label: "JAVASCRIPT",
+    // icon: QuestionMarkCircledIcon,
+  },
+  {
+    value: "JAVA",
+    label: "JAVA",
+    // icon: CircleIcon,
+  },
+  {
+    value: "KOTLIN",
+    label: "KOTLIN",
+    // icon: StopwatchIcon,
+  },
+  {
+    value: "PLSQL",
+    label: "PLSQL",
+    // icon: CheckCircledIcon,
+  },
+  {
+    value: "PYTHON",
+    label: "PYTHON",
+    // icon: CrossCircledIcon,
+  },
+  {
+    value: "SHELL",
+    label: "SHELL",
+    // icon: CrossCircledIcon,
+  },
+]

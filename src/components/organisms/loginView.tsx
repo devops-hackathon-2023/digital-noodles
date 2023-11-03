@@ -1,6 +1,3 @@
-import Link from "next/link";
-import {cn} from "@/utils/lib/utils";
-import {buttonVariants} from "@/components/atoms/button";
 import Image from "next/image";
 import dopo from "../../../public/dopo_portal.png";
 import collaboration from "../../../public/colab.png";
@@ -12,15 +9,6 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { provi
 const LoginView: React.FC<UserAuthFormProps> = ({ providers }) => {
   return (
     <>
-      <Link
-        href="/todo"
-        className={cn(
-          buttonVariants({variant: "ghost"}),
-          "absolute right-4 top-4 md:right-8 md:top-8"
-        )}
-      >
-        Login
-      </Link>
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
         <div className="absolute inset-0 bg-zinc-900"/>
         <div className="absolute top-1/2 left-1/2" style={{transform: "translate(-50%, -50%)"}}>

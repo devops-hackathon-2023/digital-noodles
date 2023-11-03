@@ -2,11 +2,11 @@
 
 import * as React from "react"
 
-import { cn } from "@/utils/lib/utils"
-import { Input } from "@/components/atoms/input"
+import {cn} from "@/utils/lib/utils"
+import {Input} from "@/components/atoms/input"
 import {Button} from "@/components/atoms/button";
-import { Label } from "@/components/atoms/label";
-import { Icons } from "../icons";
+import {Label} from "@/components/atoms/label";
+import {Icons} from "../icons";
 import {signIn} from "next-auth/react";
 import {useRouter} from "next/dist/client/router";
 

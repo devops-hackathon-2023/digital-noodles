@@ -1,22 +1,49 @@
 import {useRouter} from "next/router";
-import {PageResponseDeploymentUnitResponse} from "@/utils/types";
+import {PageResponseAppModuleResponse, PageResponseDeploymentUnitResponse, SortType} from "@/utils/types";
 import PlatformLayout from "@/components/layouts/platformLayout";
 import AppModuleDashboardView from "@/components/organisms/app-modules/appModuleDashboardView";
 import useSWR from "swr";
 import {flyIoFetcher} from "@/utils/lib/fetcher";
+import {useCallback, useEffect, useState} from "react";
 
 const Index = () => {
   const router = useRouter()
   const appModuleId = router.query.appModuleId
 
-  const {data: deploymentUnits} = useSWR<PageResponseDeploymentUnitResponse>(
-    () => appModuleId ? `app-modules/${appModuleId}/deployment-units` : null, flyIoFetcher
+  const [dataTableSize, setDataTableSize] = useState(10)
+  const [dataTablePage, setDataTablePage] = useState(0)
+
+  const {
+    data: deploymentUnits,
+    mutate
+  } = useSWR<PageResponseDeploymentUnitResponse>(
+    () => appModuleId ? `app-modules/${appModuleId}/deployment-units?page=${dataTablePage}&size=${dataTableSize}` : null, flyIoFetcher
   );
+
   const {data: appModule} = useSWR(() => appModuleId ? `app-modules/${appModuleId}` : null, flyIoFetcher)
+
+  const handleDataTablePage = useCallback((page: number) => {
+    setDataTablePage(page)
+  }, [])
+
+  const handleDataTableSize = useCallback((size: number) => {
+    setDataTableSize(size)
+  }, [])
+
+
+  useEffect(() => {
+    mutate()
+  }, [dataTablePage, dataTableSize])
 
   return (
     <PlatformLayout>
-      <AppModuleDashboardView deploymentUnits={deploymentUnits} appModule={appModule}/>
+      <AppModuleDashboardView
+        deploymentUnits={deploymentUnits}
+        appModule={appModule}
+        dataTablePageSize={dataTableSize}
+        handleTableSize={handleDataTableSize}
+        handleTablePage={handleDataTablePage}
+      />
     </PlatformLayout>
   )
 }

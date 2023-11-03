@@ -1,24 +1,74 @@
-import {AppModuleResponse, PageResponseAppModuleResponse} from "@/utils/types";
+import {PageResponseAppModuleResponse, SortType} from "@/utils/types";
 import {NextPage} from "next";
-import Link from "next/link";
+import {AppModulesDataTable} from "@/components/organisms/app-modules/appModuleDataTable/appModulesDataTable";
+import {columns} from "@/components/organisms/app-modules/appModuleDataTable/columns";
+import {Button} from "@/components/atoms/button";
+import {Skeleton} from "@/components/atoms/skeleton";
 
 interface AppModuleDetailViewProps {
-  pageAppModules?: PageResponseAppModuleResponse
+  pageAppModules?: PageResponseAppModuleResponse,
+  handleTablePage: (page: number) => void,
+  handleTableSize: (size: number) => void,
+  handleDataTableSort: (sort: SortType) => void,
+  dataTablePageSize: number
 }
 
-const AppModulesView: NextPage<AppModuleDetailViewProps> = ({pageAppModules}) => {
-  return (
-    <>
-      {pageAppModules?.page.map((a: AppModuleResponse, index: number) => {
-        return (
-          <div key={index}>
-            <Link href={`/app-modules/${a.id}`}>
-              {a.name}
-            </Link>
+const AppModulesView: NextPage<AppModuleDetailViewProps> = ({
+                                                              pageAppModules,
+                                                              handleTablePage,
+                                                              handleTableSize,
+                                                              handleDataTableSort,
+                                                              dataTablePageSize
+                                                            }) => {
+
+  if (!pageAppModules) {
+    return (
+      <div className="relative flex flex-col gap-5">
+        <div className="flex w-full justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:leading-[1.1]">
+              App modules
+            </h1>
           </div>
-        )
-      })}
-    </>
+          <Button>
+            Add new app modules
+          </Button>
+        </div>
+        <div className={"flex flex-col gap-3"}>
+          <Skeleton className="h-4 w-[250px]"/>
+          <Skeleton className="h-6 w-full"/>
+          <Skeleton className="h-6 w-full"/>
+          <div className={"flex justify-end"}>
+            <Skeleton className="h-4 w-[100px]"/>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="relative flex flex-col gap-5">
+      <div className="flex w-full justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:leading-[1.1]">
+            App modules
+          </h1>
+        </div>
+        <Button>
+          Add new app modules
+        </Button>
+      </div>
+      <AppModulesDataTable
+        data={pageAppModules.page}
+        columns={columns}
+        pageCount={pageAppModules.pageCount}
+        pageSize={dataTablePageSize}
+        pageNumber={pageAppModules.pageNumber}
+        handleTableSize={handleTablePage}
+        handleTablePage={handleTableSize}
+        handleDataTableSort={handleDataTableSort}
+      />
+    </div>
   )
 }
 

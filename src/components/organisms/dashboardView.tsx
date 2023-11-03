@@ -3,6 +3,7 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/atoms/card"
 import {Progress} from "@/components/atoms/progress";
 import Link from "next/link";
 import {Button} from "@/components/atoms/button";
+import {useSession} from "next-auth/react";
 
 const deployments = [
   {
@@ -123,12 +124,15 @@ const SasesList = () => {
 
 
 const DashboardView = () => {
+  const {data: session} = useSession()
+
+
   return (
     <div className="relative flex flex-col gap-5">
       <div className="flex w-full justify-between items-center">
         <div>
           <h2 className="text-2xl leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
-            Hello, John!🖐️
+            Hello, {session?.user?.name}!🖐️
           </h2>
           <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:leading-[1.1]">
             Welcome back!
