@@ -32,6 +32,7 @@ import {Label} from "@/components/atoms/label";
 import {SasResponse} from "@/utils/types";
 import {Skeleton} from "@/components/atoms/skeleton";
 import {useSas} from "@/utils/SasContext";
+import {useRouter} from "next/router";
 
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>
@@ -46,6 +47,8 @@ export default function TeamSwitcher({className}: TeamSwitcherProps) {
     allSasResponses,
     isLoading: currentSasLoading
   } = useSas();
+
+  const router = useRouter()
 
   const [open, setOpen] = React.useState(false)
   const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false)
@@ -89,8 +92,12 @@ export default function TeamSwitcher({className}: TeamSwitcherProps) {
                 <CommandItem
                   key={s.id}
                   onSelect={() => {
-                    handleSas(s)
                     setOpen(false)
+                    if (selectedSas?.id !== s.id) {
+                      router.push("/").then(() => {
+                        handleSas(s)
+                      })
+                    }
                   }}
                   className="text-sm"
                 >

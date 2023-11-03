@@ -15,18 +15,20 @@ import {
 } from "@/components/atoms/dropdown-menu"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/atoms/avatar"
 import {cn} from "@/utils/lib/utils";
-import {signOut} from "next-auth/react";
+import {signOut, useSession} from "next-auth/react";
 import {useRouter} from "next/router";
 
 export function ProfileDropdownMenu({className}: any) {
   const router = useRouter();
+
+  const {data: session} = useSession()
 
   return (
     <div className={cn(className)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png"/>
+            <AvatarImage src={session?.user?.image!}/>
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
