@@ -1,30 +1,23 @@
 import {useRouter} from "next/router";
-import useFetch from "@/utils/useFetch";
-import {DeploymentUnitResponse, PageResponseDeploymentUnitResponse} from "@/utils/types";
-import Link from "next/link";
+import {PageResponseDeploymentUnitResponse} from "@/utils/types";
+import PlatformLayout from "@/components/layouts/platformLayout";
+import AppModuleDashboardView from "@/components/organisms/app-modules/appModuleDashboardView";
+import useSWR from "swr";
+import {flyIoFetcher} from "@/utils/lib/fetcher";
 
 const Index = () => {
   const router = useRouter()
-  const appModuleId = router.query.id
-  const {data} = useFetch<PageResponseDeploymentUnitResponse>(`app-modules/${appModuleId}/deployment-units`)
+  const appModuleId = router.query.appModuleId
 
-  // const appModuleId = router.query.id;
-  // const {data, error, isLoading} = appModuleId
-  //   ? useFetch<PageResponseDeploymentUnitResponse>(`app-modules/${appModuleId}/deployment-units`)
-  //   : {data: null, error: null, isLoading: false };
+  const {data: deploymentUnits} = useSWR<PageResponseDeploymentUnitResponse>(
+    () => appModuleId ? `app-modules/${appModuleId}/deployment-units` : null, flyIoFetcher
+  );
+  const {data: appModule} = useSWR(() => appModuleId ? `app-modules/${appModuleId}` : null, flyIoFetcher)
 
   return (
-    <div>
-      {data?.page.map((d: DeploymentUnitResponse, index: number) => {
-        return (
-          <div key={index}>
-            <Link href={`/deployment-units/${d.id}}`}>
-              {d.name}
-            </Link>
-          </div>
-        )
-      })}
-    </div>
+    <PlatformLayout>
+      <AppModuleDashboardView deploymentUnits={deploymentUnits} appModule={appModule}/>
+    </PlatformLayout>
   )
 }
 

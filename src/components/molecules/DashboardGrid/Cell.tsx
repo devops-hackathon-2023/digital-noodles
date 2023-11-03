@@ -1,12 +1,11 @@
 import React from 'react';
 import useSWR from "swr";
-import fetcher from "@/utils/fetcher";
+import {fetcher} from "@/utils/lib/fetcher";
 import className from "classnames";
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/atoms/card";
 import {StatType} from "@/utils/types";
 import {MemoryStick, Timer} from "lucide-react";
 import {LineChart, CartesianGrid, Line, XAxis, YAxis, ResponsiveContainer} from "recharts";
-import {SizeMe} from "react-sizeme";
 
 interface CellProps {
     id: string,

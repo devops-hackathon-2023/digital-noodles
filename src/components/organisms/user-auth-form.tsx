@@ -2,13 +2,13 @@
 
 import * as React from "react"
 
-import {cn} from "@/lib/utils"
-import {Input} from "../ui/input"
-import {Button} from "@/components/ui/button";
-import {Label} from "../ui/label";
-import {Icons} from "../icons";
+import { cn } from "@/utils/lib/utils"
+import { Input } from "@/components/atoms/input"
+import {Button} from "@/components/atoms/button";
+import { Label } from "@/components/atoms/label";
+import { Icons } from "../icons";
 import {signIn} from "next-auth/react";
-import {useRouter} from "next/router";
+import {useRouter} from "next/dist/client/router";
 
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { providers: object }
@@ -66,7 +66,7 @@ export function UserAuthForm({ className, providers, ...props }: UserAuthFormPro
         Object.values(providers).map((provider) => (
             <Button variant="outline" type="button" disabled={isLoading} onClick={() => {
               setIsLoading(true)
-              signIn(provider.id).then(() => (router.replace("/")))
+              signIn(provider.id)
             }}>
               {isLoading ? (
                   <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />

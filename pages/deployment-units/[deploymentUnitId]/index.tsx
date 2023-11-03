@@ -4,12 +4,11 @@ import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import DashboardGrid from "@/components/molecules/DashboardGrid/DashboardGrid";
 import useSWR from "swr";
-import fetcher from "@/utils/fetcher";
 import {StatType} from "@/utils/types";
 import axios from "axios";
 import {swapItemWithId} from "@/utils/helpers";
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {Button} from "@/components/ui/button";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/atoms/tabs";
+import {Button} from "@/components/atoms/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -19,10 +18,12 @@ import {
     DropdownMenuSubContent,
     DropdownMenuSubTrigger,
     DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
+} from '@/components/atoms/dropdown-menu';
 import {AreaChart, Blocks, Check, Cpu, HeartPulse, MemoryStick, Pencil, Plus} from "lucide-react";
 import useOutsideClick from "@/utils/useOutsideClick";
 import DraggableStat from "@/components/molecules/DraggableStat/DraggableStat";
+import {fetcher} from "@/utils/lib/fetcher";
+import PlatformLayout from "@/components/layouts/platformLayout";
 
 interface DeploymentUnitPageProps {
     deploymentUnitId: string
@@ -57,7 +58,7 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({deploymentUnitId
     }
 
     return (
-        <>
+        <PlatformLayout>
             <div>
                 {/*@ts-ignore*/}
                 {/*<DashboardGrid layout={layout} onLayoutChange={(layout) => setLayout(layout.map(layout => ({ layout: layout })))}/>*/}
@@ -148,7 +149,7 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({deploymentUnitId
                     </Tabs>
                 }
             </div>
-        </>
+        </PlatformLayout>
     );
 };
 

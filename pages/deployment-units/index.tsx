@@ -1,27 +1,21 @@
-import useFetch from "@/utils/useFetch";
-import {DeploymentUnitResponse, PageResponseDeploymentUnitResponse} from "@/utils/types";
+import {PageResponseDeploymentUnitResponse} from "@/utils/types";
 import {useSas} from "@/utils/SasContext";
-import Link from "next/link";
+import PlatformLayout from "@/components/layouts/platformLayout";
+import DeploymentUnitsView from "@/components/organisms/deployment-units/deploymentUnitsView";
+import useSWR from "swr";
+import {flyIoFetcher} from "@/utils/lib/fetcher";
 
 const DeploymentUnits = () => {
   const {
     selectedSas
   } = useSas();
 
-  const {data} = useFetch<PageResponseDeploymentUnitResponse>("deployment-units")
+  const {data} = useSWR<PageResponseDeploymentUnitResponse>("/deployment-units", flyIoFetcher)
 
   return (
-    <div>
-      {data?.page.filter(d => d.sasId === selectedSas?.id).map((d: DeploymentUnitResponse, index: number) => {
-        return (
-          <div key={index}>
-            <Link href={`/deployment-units/${d.id}}`}>
-              {d.name}
-            </Link>
-          </div>
-        )
-      })}
-    </div>
+    <PlatformLayout>
+      <DeploymentUnitsView data={data} selectedSas={selectedSas}/>
+    </PlatformLayout>
   )
 }
 

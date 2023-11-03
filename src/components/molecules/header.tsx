@@ -1,6 +1,6 @@
-import {Input} from "@/components/ui/input";
+import {Input} from "@/components/atoms/input";
 import {ProfileDropdownMenu} from "@/components/organisms/profile-dropdown-menu";
-import {ModeToggle} from "@/components/ui/mode-toggle";
+import {ModeToggle} from "@/components/atoms/mode-toggle";
 import {usePathname} from "next/navigation";
 import Link from "next/link";
 import TeamSwitcher from "@/components/organisms/team-switcher";
@@ -9,10 +9,10 @@ import {LayoutDashboard} from 'lucide-react';
 import {Package} from 'lucide-react';
 import {Puzzle} from 'lucide-react';
 
-import {Button} from "@/components/ui/button";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
-import {Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTrigger} from "@/components/ui/sheet";
-import {Separator} from "@/components/ui/separator";
+import {Button} from "@/components/atoms/button";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/atoms/avatar";
+import {Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTrigger} from "@/components/atoms/sheet";
+import {Separator} from "@/components/atoms/separator";
 
 const Header = () => {
   const pathname = usePathname()

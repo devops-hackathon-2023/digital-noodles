@@ -1,6 +1,7 @@
 import React, {createContext, ReactNode, useCallback, useContext, useEffect, useState} from 'react';
 import {PageResponseSasResponse, SasResponse} from "@/utils/types";
-import useFetch from "@/utils/useFetch";
+import useSWR from "swr";
+import {flyIoFetcher} from "@/utils/lib/fetcher";
 
 interface SasContextProps {
   selectedSas: SasResponse | undefined;
@@ -23,7 +24,7 @@ export const SasProvider: React.FC<{
   const {
     data,
     isLoading
-  } = useFetch<PageResponseSasResponse>("sases");
+  } = useSWR<PageResponseSasResponse>("https://dopo.fly.dev/api/v1/dopo/sases", flyIoFetcher);
 
   const [selectedSas, setSas] = useState<SasResponse>();
   const [allSasResponses, setAllSasResponses] = useState<SasResponse[]>();

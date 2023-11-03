@@ -1,27 +1,21 @@
 import {useSas} from "@/utils/SasContext";
-import useFetch from "@/utils/useFetch";
-import {AppModuleResponse, PageResponseAppModuleResponse} from "@/utils/types";
-import Link from "next/link";
+import {PageResponseAppModuleResponse} from "@/utils/types";
+import PlatformLayout from "@/components/layouts/platformLayout";
+import AppModulesView from "@/components/organisms/app-modules/appModulesView";
+import useSWR from "swr";
+import {flyIoFetcher} from "@/utils/lib/fetcher";
 
 const AppModules = () => {
   const {
     selectedSas
   } = useSas();
 
-  const {data} = useFetch<PageResponseAppModuleResponse>(`sases/${selectedSas?.id}/app-modules`)
+  const {data: pageAppModules} = useSWR<PageResponseAppModuleResponse>(`sases/${selectedSas?.id}/app-modules`, flyIoFetcher)
 
   return (
-    <div>
-      {data?.page.map((a: AppModuleResponse, index: number) => {
-        return (
-          <div key={index}>
-            <Link href={`/app-modules/${a.id}`}>
-              {a.name}
-            </Link>
-          </div>
-        )
-      })}
-    </div>
+    <PlatformLayout>
+      <AppModulesView pageAppModules={pageAppModules}/>
+    </PlatformLayout>
   )
 }
 
