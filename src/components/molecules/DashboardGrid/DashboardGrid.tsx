@@ -17,7 +17,9 @@ interface DashboardGridProps {
 }
 
 const MinWMinHDict = {
-    [StatType.STATS_AVG_BUILD_TIME]: { minW: 1, minH: 1, maxW: 2, maxH: 2 }
+    [StatType.STATS_AVG_BUILD_TIME]: { minW: 1, minH: 1, maxW: 2, maxH: 2 },
+    [StatType.SYSTEM_CPU_USAGE]: { minW: 1, minH: 1, maxW: 6, maxH: 3 },
+    [StatType.SYSTEM_RAM_USAGE]: { minW: 1, minH: 1, maxW: 6, maxH: 3 }
 }
 
 const DashboardGrid: React.FC<DashboardGridProps> = ({ dashboardConfigId, layout, onLayoutChange, draggedStatType, editing }) => {
@@ -66,7 +68,11 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({ dashboardConfigId, layout
     }
 
     const prepareDatGridCell = (dashboardCell: DashboardGridCellConfig) => {
-        return { i: dashboardCell.id, x: dashboardCell.x, y: dashboardCell.y, w: dashboardCell.w, h: dashboardCell.h, static: !editing, ...MinWMinHDict["STATS_AVG_BUILD_TIME"] }
+        const cell = { i: dashboardCell.id, x: dashboardCell.x, y: dashboardCell.y, w: dashboardCell.w, h: dashboardCell.h, static: !editing,
+            // @ts-ignore
+            ...MinWMinHDict[dashboardCell.statType] }
+        console.log(cell)
+        return cell
     }
 
     return (

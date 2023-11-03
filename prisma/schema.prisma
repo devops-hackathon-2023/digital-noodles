@@ -97,3 +97,10 @@ model DashboardCell {
     w                 Int
     h                 Int
 }
+
+model RamUsageMock {
+    id         String @id @default(cuid())
+    amountInMB Int
+    time       String
+    cellId     String
+}

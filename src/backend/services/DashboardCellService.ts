@@ -15,7 +15,12 @@ class DashboardCellService {
     ) {
     }
 
-    async showData(cellId: string) {
+    /**
+     *
+     * @param cellId
+     * @param prevData - Data from previous run to make valid data in time series
+     */
+    async showData(cellId: string, prevData?: any[]) {
         const dashboardCell = await this.prisma.dashboardCell.findFirst({
             where: {
                 id: cellId
@@ -42,6 +47,8 @@ class DashboardCellService {
                 return {
                     avg
                 }
+            case "SYSTEM_RAM_USAGE":
+                console.log(prevData)
         }
     }
 }

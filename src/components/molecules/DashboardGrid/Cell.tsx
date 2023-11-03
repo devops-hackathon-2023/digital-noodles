@@ -4,7 +4,9 @@ import fetcher from "@/utils/fetcher";
 import className from "classnames";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {StatType} from "@/utils/types";
-import {Timer} from "lucide-react";
+import {MemoryStick, Timer} from "lucide-react";
+import {LineChart, CartesianGrid, Line, XAxis, YAxis, ResponsiveContainer} from "recharts";
+import {SizeMe} from "react-sizeme";
 
 interface CellProps {
     id: string,
@@ -31,10 +33,38 @@ const AvgBuildTimeCell: React.FC<CellProps> = ({ id, w, h }) => {
     </>
 }
 
+const RAMUsageCell: React.FC<CellProps> = ({ id, w, h }) => {
+    const { data } = useSWR(`/api/dashbaord-cells/${id}/data`, fetcher);
+    // const data = [
+    //     {name: '7:00', usage: 2400}, {name: '7:10', usage: 2500}, {name: '7:20', usage: 2800},
+    //     {name: '7:30', usage: 1000}, {name: '7:40', usage: 1100}, {name: '7:50', usage: 800}
+    // ];
+
+    return <><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className={'flex items-center'}>
+            <MemoryStick className={"mr-4 h-5 w-5"}/> RAM Usage
+        </CardTitle>
+    </CardHeader>
+        <CardContent className={"flex-grow"}>
+            {
+                data ? <ResponsiveContainer width={"100%"} height="100%">
+                    <LineChart data={data}>
+                        <Line type="monotone" dataKey="usage" stroke="#8884d8" />
+                        <CartesianGrid stroke="#ccc" />
+                        <XAxis dataKey="name" />
+                        <YAxis width={40}/>
+                    </LineChart>
+                </ResponsiveContainer> : "Loading"
+            }
+        </CardContent>
+        </>
+}
+
 const Cell: React.FC<CellProps> = (props) => {
     return (
         <Card className={className('h-full', 'w-full', 'flex', 'flex-col')}>
             { props.statType === StatType.STATS_AVG_BUILD_TIME && <AvgBuildTimeCell {...props}/> }
+            { props.statType === StatType.SYSTEM_RAM_USAGE && <RAMUsageCell {...props}/> }
         </Card>
     );
 };

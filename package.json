@@ -38,6 +38,7 @@
     "react-dom": "^18",
     "react-grid-layout": "^1.4.2",
     "react-sizeme": "^3.0.2",
+    "recharts": "^2.9.2",
     "reflect-metadata": "^0.1.13",
     "swr": "^2.2.4",
     "tailwind-merge": "^2.0.0",

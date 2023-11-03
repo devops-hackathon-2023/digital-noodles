@@ -96,12 +96,17 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({deploymentUnitId
                                             <DropdownMenuPortal>
                                                 <DropdownMenuSubContent>
                                                     <DropdownMenuItem>
-                                                        <MemoryStick className={"mr-2 h-4 w-4"}/>
-                                                        RAM usage
+
+                                                        <DraggableStat icon={<MemoryStick className={"mr-2 h-4 w-4"}/>}
+                                                                       statType={StatType.SYSTEM_RAM_USAGE}
+                                                                       label={"RAM usage"}
+                                                                       onDragStart={handleDraggableDragStart}/>
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem>
-                                                        <Cpu className={"mr-2 h-4 w-4"}/>
-                                                        CPU usage
+                                                        <DraggableStat icon={<Cpu className={"mr-2 h-4 w-4"}/>}
+                                                                       statType={StatType.SYSTEM_CPU_USAGE}
+                                                                       label={"CPU Usage"}
+                                                                       onDragStart={handleDraggableDragStart}/>
                                                     </DropdownMenuItem>
                                                 </DropdownMenuSubContent>
                                             </DropdownMenuPortal>

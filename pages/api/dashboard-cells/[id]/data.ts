@@ -8,9 +8,9 @@ import DashboardCellService from "@/backend/services/DashboardCellService";
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.get(async (req, res) => {
-    const { id } = req.query
+    const { id, prevData } = req.query
     const dashboardCellService = container.resolve(DashboardCellService);
-    res.json(await dashboardCellService.showData(id as string));
+    res.json(await dashboardCellService.showData(id as string, prevData as any[]));
 })
 
 export default router.handler();
