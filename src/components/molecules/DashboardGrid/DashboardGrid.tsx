@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
 import {SizeMe} from "react-sizeme";
 import GridLayout, {Layout} from "react-grid-layout";
-import {DashboardGridCellConfig} from "@/utils/types";
+import {DashboardGridCellConfig, StatType} from "@/utils/types";
 import { v4 as uuidv4 } from 'uuid';
 import classNames from "classnames"
 import Cell from "@/components/molecules/DashboardGrid/Cell";
+import {Stats} from "fs";
 
 interface DashboardGridProps {
     dashboardConfigId: string
@@ -16,7 +17,7 @@ interface DashboardGridProps {
 }
 
 const MinWMinHDict = {
-    "STATS_AVG_BUILD_TIME": { minW: 2, minH: 2, maxW: 2, maxH: 2 }
+    [StatType.STATS_AVG_BUILD_TIME]: { minW: 1, minH: 1, maxW: 2, maxH: 2 }
 }
 
 const DashboardGrid: React.FC<DashboardGridProps> = ({ dashboardConfigId, layout, onLayoutChange, draggedStatType, editing }) => {
@@ -94,7 +95,7 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({ dashboardConfigId, layout
                                     onDelete(datagridCellConfig.id)
                                 }} className={classNames('absolute', 'top-0.5', 'right-0.5', 'z-999')}>Delete</div>
                             }
-                            <Cell id={datagridCellConfig.id} w={datagridCellConfig.w} h={datagridCellConfig.h}/>
+                            <Cell id={datagridCellConfig.id} w={datagridCellConfig.w} h={datagridCellConfig.h} statType={datagridCellConfig.statType}/>
                             </div>
                         </div>)
                     }

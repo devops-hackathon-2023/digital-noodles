@@ -1,26 +1,28 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {NextPage, NextPageContext} from "next";
-import GridLayout from "react-grid-layout";
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
-import {SizeMe} from "react-sizeme";
 import DashboardGrid from "@/components/molecules/DashboardGrid/DashboardGrid";
 import useSWR from "swr";
 import fetcher from "@/utils/fetcher";
-import {DashboardGridCellConfig} from "@/utils/types";
+import {StatType} from "@/utils/types";
 import axios from "axios";
 import {swapItemWithId} from "@/utils/helpers";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Button} from "@/components/ui/button";
 import {
     DropdownMenu,
-    DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal,
-    DropdownMenuSub, DropdownMenuSubContent,
-    DropdownMenuSubTrigger
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuPortal,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import {DropdownMenuTrigger} from '@/components/ui/dropdown-menu';
-import {AreaChart, Blocks, Check, Cpu, Hand, HeartPulse, MemoryStick, Pencil, Plus, UserPlus} from "lucide-react";
+import {AreaChart, Blocks, Check, Cpu, HeartPulse, MemoryStick, Pencil, Plus} from "lucide-react";
 import useOutsideClick from "@/utils/useOutsideClick";
+import DraggableStat from "@/components/molecules/DraggableStat/DraggableStat";
 
 interface DeploymentUnitPageProps {
     deploymentUnitId: string
@@ -47,6 +49,11 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({deploymentUnitId
                     return newLayouts
                 })
             });
+    }
+
+    const handleDraggableDragStart = (statType: StatType) => {
+        setDraggedStatType(statType)
+        setDropdownMenuOpen(false)
     }
 
     return (
@@ -109,24 +116,10 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({deploymentUnitId
                                             <DropdownMenuPortal>
                                                 <DropdownMenuSubContent>
                                                     <DropdownMenuItem>
-                                                        <Blocks className={"mr-2 h-4 w-4"}/>
-                                                        <div
-                                                            className="droppable-element"
-                                                            draggable={true}
-                                                            unselectable="on"
-                                                            // this is a hack for firefox
-                                                            // Firefox requires some kind of initialization
-                                                            // which we can do by adding this attribute
-                                                            // @see https://bugzilla.mozilla.org/show_bug.cgi?id=568313
-                                                            onDragStart={e => {
-                                                                e.dataTransfer.setData("text/plain", "")
-                                                                setDraggedStatType("STATS_AVG_BUILD_TIME")
-                                                                setDropdownMenuOpen(false)
-                                                            }}
-                                                        >
-                                                            Average build time
-                                                        </div>
-                                                        <Hand className={"ml-6 h-4 w-4"}/>
+                                                        <DraggableStat icon={<Blocks className={"mr-2 h-4 w-4"}/>}
+                                                                       statType={StatType.STATS_AVG_BUILD_TIME}
+                                                                       label={"Average build time"}
+                                                                       onDragStart={handleDraggableDragStart}/>
                                                     </DropdownMenuItem>
                                                 </DropdownMenuSubContent>
                                             </DropdownMenuPortal>
