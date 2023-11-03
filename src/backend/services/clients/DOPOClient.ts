@@ -15,6 +15,17 @@ export type GetDeploymentsArgs = {
     env?: string
 }
 
+export type GetSASesArgs = {
+    query?: string,
+    size?: number
+}
+
+export type GetDeploymentUnitsArgs = {
+    size?: number
+}
+
+export type GetAppModulesArgs = { size?: number }
+
 export type Deployment = {
     id: string;
     versionId: string;
@@ -35,7 +46,7 @@ export type Deployment = {
 class DOPOClient {
     private axios: Axios
     constructor() {
-        this.axios = new Axios({
+        this.axios = axios.create({
             baseURL: "https://dopo.fly.dev/api/v1/dopo",
             auth: {
                 username: process.env.DOPO_API_USERNAME as string,
@@ -45,13 +56,36 @@ class DOPOClient {
     }
 
     public async getDeployments(args: GetDeploymentsArgs): Promise<DOPOResponse<Deployment>> {
-        return await axios.get('https://dopo.fly.dev/api/v1/dopo/deployments', { params: {
+        return await this.axios.get('/deployments', { params: {
                 deploymentUnitId: args.deploymentUnitId
-            }, auth: {
-                username: process.env.DOPO_API_USERNAME as string,
-                password: process.env.DOPO_API_PASSWORD as string
             }})
             .then((response) => response.data)
+    }
+
+    public async getSASes(args: GetSASesArgs) {
+        const results = await this.axios.get('/sases', {
+            params: {
+                size: args.size ?? 30
+            }
+        }).then(response => response.data)
+
+        return results;
+    }
+
+    async getAppModules(args: GetAppModulesArgs) {
+        return await this.axios.get('/app-modules', {
+            params: {
+                size: args.size ?? 30
+            }
+        }).then(response => response.data)
+    }
+
+    async getDeploymentUnits(args: GetDeploymentUnitsArgs) {
+        return await this.axios.get('/deployment-units', {
+            params: {
+                size: args.size ?? 30
+            }
+        }).then(response => response.data)
     }
 }
 
