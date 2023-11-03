@@ -15,6 +15,26 @@ class DashboardCellService {
     ) {
     }
 
+    subtractMinutesFromDate(date: Date, seconds: number) {
+        return new Date(date.getTime() - seconds * 1000);
+    }
+
+    generateNewRAMUsage(lastRAMUsage: number) {
+        let newRAMUsage = lastRAMUsage
+        if(Math.random() > 0.5) {
+            newRAMUsage = lastRAMUsage + 200
+            if(newRAMUsage > 20000)
+                newRAMUsage = 15000
+        } else {
+            newRAMUsage = lastRAMUsage - 200
+            if(newRAMUsage < 0) {
+                newRAMUsage = 1000
+            }
+        }
+
+        return newRAMUsage;
+    }
+
     /**
      *
      * @param cellId
@@ -48,7 +68,46 @@ class DashboardCellService {
                     avg
                 }
             case "SYSTEM_RAM_USAGE":
-                console.log(prevData)
+                const data = await this.prisma.ramUsageMock.findMany({
+                    where: {
+                        cellId: dashboardCell.id
+                    }
+                })
+
+                const now = new Date(Date.now());
+
+                if(data.length < 5) {
+                    await this.prisma.ramUsageMock.createMany({
+                        data: [
+                            ...Array.from(Array(10).keys()).map((idx) => ({
+                                amountInMB: 2000,
+                                time: (this.subtractMinutesFromDate(now, idx * 10)).toISOString(),
+                                cellId: dashboardCell.id
+                            }))
+                        ]
+                    })
+                }
+                else {
+                    const newEntry = await this.prisma.ramUsageMock.create({
+                        data: {
+                            amountInMB: this.generateNewRAMUsage(data[data.length - 1].amountInMB),
+                            time: now.toISOString(),
+                            cellId: dashboardCell.id
+                        }
+                    })
+                }
+
+                const rv = await this.prisma.ramUsageMock.findMany({
+                    where: {
+                        cellId: dashboardCell.id
+                    },
+                    orderBy: {
+                        id: 'desc'
+                    },
+                    take: 5
+                })
+                console.log("RV" + rv);
+                return rv.reverse()
         }
     }
 }
