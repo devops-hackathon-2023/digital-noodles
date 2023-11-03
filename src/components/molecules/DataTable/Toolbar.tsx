@@ -3,14 +3,25 @@
 import {Table} from "@tanstack/react-table"
 import {Input} from "@/components/atoms/input";
 import {DataTableViewOptions} from "@/components/molecules/DataTable/Options";
+import {DataTableFacetedFilter} from "@/components/molecules/DataTable/Filter";
+
+interface Filter {
+  column: string,
+  options: {
+    label: string
+    value: string
+  }[]
+}
 
 interface DataTableToolbarProps<TData> {
-  table: Table<TData>
+  table: Table<TData>,
+  filters?: Filter[]
 }
 
 export function Toolbar<TData>({
-                                          table,
-                                        }: DataTableToolbarProps<TData>) {
+                                 table,
+                                 filters
+                               }: DataTableToolbarProps<TData>) {
 
   return (
     <div className="flex items-center justify-between">
@@ -23,8 +34,16 @@ export function Toolbar<TData>({
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
+        {filters !== undefined && filters.map((f: Filter) =>
+          (
+            <DataTableFacetedFilter
+              column={table.getColumn(f.column)}
+              title="Status"
+              options={f.options}
+            />
+          ))}
       </div>
-      <DataTableViewOptions table={table} />
+      <DataTableViewOptions table={table}/>
     </div>
   )
 }

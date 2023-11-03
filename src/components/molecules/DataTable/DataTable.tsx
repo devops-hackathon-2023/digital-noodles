@@ -10,17 +10,27 @@ interface DataTableProps {
   columns: any,
   handleTablePage: (page: number) => void,
   handleTableSize: (size: number) => void,
+  filters?: Filter[]
+}
+
+interface Filter {
+  column: string,
+  options: {
+    label: string
+    value: string
+  }[]
 }
 
 const DataTable: NextPage<DataTableProps> = ({
                                                table,
                                                columns,
                                                handleTablePage,
-                                               handleTableSize
+                                               handleTableSize,
+                                               filters
                                              }) => {
   return (
     <div className="space-y-4">
-      <Toolbar table={table}/>
+      <Toolbar table={table} filters={filters}/>
       <div className="rounded-md border">
         <Table>
           <TableHeader>

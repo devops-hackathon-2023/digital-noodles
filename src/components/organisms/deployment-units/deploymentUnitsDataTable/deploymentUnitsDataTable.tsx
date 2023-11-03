@@ -15,6 +15,7 @@ import {
   VisibilityState,
 } from "@tanstack/react-table"
 import DataTable from "@/components/molecules/DataTable/DataTable";
+import {languages} from "@/utils/types";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -72,6 +73,10 @@ export function DeploymentUnitsDataTable<TData, TValue>({
 
   return (
     <DataTable
+      filters={[{
+        column: "language",
+        options: languages
+      }]}
       table={table}
       columns={columns}
       handleTablePage={handleTablePage}
