@@ -10,7 +10,7 @@ export const columns: ColumnDef<AppModuleResponse>[] = [
       <DataTableColumnHeader column={column} title="Name"/>
     ),
     cell: ({row}) => <div className="w-[100px]">
-      <Link href={`/app-modules/${row.getValue("id")}`}>
+      <Link href={`/deployment-units/${row.getValue("id")}`}>
         {row.getValue("name")}
       </Link>
     </div>,
