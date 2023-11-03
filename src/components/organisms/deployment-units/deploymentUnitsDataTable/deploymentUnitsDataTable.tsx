@@ -74,6 +74,7 @@ export function DeploymentUnitsDataTable<TData, TValue>({
   return (
     <DataTable
       filters={[{
+        title: "Language",
         column: "language",
         options: languages
       }]}

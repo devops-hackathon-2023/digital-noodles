@@ -15,6 +15,7 @@ interface DataTableProps {
 
 interface Filter {
   column: string,
+  title: string,
   options: {
     label: string
     value: string

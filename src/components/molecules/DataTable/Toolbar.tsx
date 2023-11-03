@@ -7,6 +7,7 @@ import {DataTableFacetedFilter} from "@/components/molecules/DataTable/Filter";
 
 interface Filter {
   column: string,
+  title: string,
   options: {
     label: string
     value: string
@@ -38,7 +39,7 @@ export function Toolbar<TData>({
           (
             <DataTableFacetedFilter
               column={table.getColumn(f.column)}
-              title="Status"
+              title={f.title}
               options={f.options}
             />
           ))}
