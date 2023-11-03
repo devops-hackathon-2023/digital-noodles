@@ -3,7 +3,7 @@
 import * as React from "react"
 import {CaretSortIcon, CheckIcon, PlusCircledIcon,} from "@radix-ui/react-icons"
 
-import {cn} from "@/lib/utils"
+import {cn} from "@/utils/lib/utils"
 
 import {
   Dialog,
@@ -13,12 +13,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/atoms/dialog"
 
-import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover"
-import {Button} from "../ui/button"
-import {Avatar, AvatarFallback} from "../ui/avatar"
-import {AvatarImage} from "@/components/ui/avatar";
+import {Popover, PopoverContent, PopoverTrigger,} from "@/components/atoms/popover"
+import {Button} from "@/components/atoms/button"
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/atoms/avatar"
 import {
   Command,
   CommandEmpty,
@@ -27,13 +26,11 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator
-} from "@/components/ui/command";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
-import {PageResponseSasResponse, SasResponse} from "@/utils/types";
-import useFetch from "@/utils/useFetch";
-import {useEffect} from "react";
-import {Skeleton} from "@/components/ui/skeleton";
+} from "@/components/atoms/command";
+import {Input} from "@/components/atoms/input";
+import {Label} from "@/components/atoms/label";
+import {SasResponse} from "@/utils/types";
+import {Skeleton} from "@/components/atoms/skeleton";
 import {useSas} from "@/utils/SasContext";
 
 

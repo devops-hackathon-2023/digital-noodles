@@ -6,10 +6,10 @@ import 'react-resizable/css/styles.css'
 import {SizeMe} from "react-sizeme";
 import DashboardGrid from "@/components/molecules/DashboardGrid/DashboardGrid";
 import useSWR from "swr";
-import fetcher from "@/utils/fetcher";
 import {DashboardGridCellConfig} from "@/utils/types";
 import axios from "axios";
 import {swapItemWithId} from "@/utils/helpers";
+import {fetcher} from "@/utils/lib/fetcher";
 
 interface DeploymentUnitPageProps {
     deploymentUnitId: string

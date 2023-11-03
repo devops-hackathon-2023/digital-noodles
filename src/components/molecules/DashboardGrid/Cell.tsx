@@ -1,6 +1,6 @@
 import React from 'react';
 import useSWR from "swr";
-import fetcher from "@/utils/fetcher";
+import {fetcher} from "@/utils/lib/fetcher";
 
 interface CellProps {
     id: string,

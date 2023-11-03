@@ -12,9 +12,9 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
-import {cn} from "@/lib/utils";
+} from "@/components/atoms/dropdown-menu"
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/atoms/avatar"
+import {cn} from "@/utils/lib/utils";
 
 export function ProfileDropdownMenu({className}: any) {
   return (
