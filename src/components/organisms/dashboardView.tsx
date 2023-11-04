@@ -4,6 +4,7 @@ import {Progress} from "@/components/atoms/progress";
 import Link from "next/link";
 import {Button} from "@/components/atoms/button";
 import {useSession} from "next-auth/react";
+import {Octokit} from "octokit";
 
 const deployments = [
   {
@@ -125,7 +126,15 @@ const SasesList = () => {
 
 const DashboardView = () => {
   const {data: session} = useSession()
+  console.log(session)
+  const octokit = new Octokit({
+    auth: `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`
+  });
 
+  const response = octokit.request('GET /user/repos');
+  response.then((response) => {
+    console.log(response.data)
+  })
 
   return (
     <div className="relative flex flex-col gap-5">

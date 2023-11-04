@@ -1,36 +1,44 @@
 import React from 'react';
 import {StatType} from "@/utils/types";
 import {Hand} from "lucide-react";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/atoms/card";
+import Link from "next/link";
+import {Button} from "@/components/atoms/button";
+import {Progress} from "@/components/atoms/progress";
+import chartImg from "@/assets/images/chart.png"
+import Image from "next/image";
 
 interface DraggableStatProps {
-    icon: React.ReactNode,
-    statType: StatType,
-    label: string,
-    onDragStart: (statType: StatType) => void
+  icon: React.ReactNode,
+  statType: StatType,
+  label: string,
+  onDragStart: (statType: StatType) => void
 }
 
-const DraggableStat : React.FC<DraggableStatProps> = ({ label, statType, icon, onDragStart }) => {
-    return (
-        <>
-            { icon }
-            <div
-                className="droppable-element"
-                draggable={true}
-                unselectable="on"
-                // this is a hack for firefox
-                // Firefox requires some kind of initialization
-                // which we can do by adding this attribute
-                // @see https://bugzilla.mozilla.org/show_bug.cgi?id=568313
-                onDragStart={e => {
-                    e.dataTransfer.setData("text/plain", "")
-                    onDragStart(statType)
-                }}
-            >
-                { label }
-            </div>
-            <Hand className={"ml-6 h-4 w-4"}/>
-        </>
-    );
+const DraggableStat: React.FC<DraggableStatProps> = ({
+                                                       label,
+                                                       statType,
+                                                       icon,
+                                                       onDragStart
+                                                     }) => {
+  return (
+    <>
+      <Card className="droppable-element" draggable={true} unselectable="on" onDragStart={e => {
+        e.dataTransfer.setData("text/plain", "")
+        onDragStart(statType)
+      }}>
+        <CardHeader className="flex flex-row items-center justify-between space-y-2 pb-7">
+          <CardTitle className="flex justify-between items-center w-full">
+            <div className="text-2xl font-bold">{label}</div>
+            {icon}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex gap-5">
+          <Image src={chartImg} alt={"chart"} style={{maxWidth: "300px"}} className={"hidden md:block"}/>
+        </CardContent>
+      </Card>
+    </>
+  );
 };
 
 export default DraggableStat;

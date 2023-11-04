@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+@tailwind variants;
 
 @layer base {
     :root {
@@ -26,7 +26,7 @@
         --ring: 240 5.9% 10%;
         --radius: 0.5rem;
 
-
+        --resizer-handle: hsl(0, 0%, 20%);
         --rsbs-backdrop-bg: rgba(0, 0, 0, 0.6);
         --rsbs-bg: #fff;
         --rsbs-handle-bg: hsla(0, 0%, 0%, 0.14);
@@ -57,6 +57,7 @@
         --input: 240 3.7% 15.9%;
         --ring: 240 4.9% 83.9%;
 
+        --resizer-handle: #fff;
         --rsbs-backdrop-bg: rgba(0, 0, 0, 0.6);
         --rsbs-bg: #131313;
         --rsbs-handle-bg: #fff;
@@ -88,6 +89,10 @@
 
 .react-grid-item.react-grid-placeholder {
     background-color: white !important;
+}
+
+.droppable-element:active {
+    cursor: grabbing;
 }
 
 @keyframes moveLeftToOrigin {
@@ -123,4 +128,13 @@
         transform: translateX(0);
         opacity: 1;
     }
+}
+
+.react-resizable-handle::after {
+    background: var(--resizer-handle);
+
+    display:block;
+    border-radius: 5px;
+    width: 20px !important;
+    height: 20px !important;
 }

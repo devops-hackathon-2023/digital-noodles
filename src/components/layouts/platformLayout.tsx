@@ -19,8 +19,9 @@ const PlatformLayout: React.FC<PlatformLayoutProps> = ({children}) => {
     },
   })
 
+
   if (status === "loading") {
-    if (pathname === "/login") {
+    if (pathname === "/") {
       return <div className="container flex min-h-screen justify-center items-center">
         <LoadingView/>
       </div>
