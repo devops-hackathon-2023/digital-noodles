@@ -15,7 +15,7 @@ import {
   Check,
   Cpu,
   GitBranch,
-  GitCommitHorizontal,
+  GitCommitHorizontal, HeartPulse,
   MemoryStick,
   Pencil,
   Plus,
@@ -172,6 +172,10 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({deploymentUnitId
                       <DraggableStat icon={<Cpu className={"mr-2 h-6 w-6"}/>}
                                      statType={StatType.SYSTEM_CPU_USAGE}
                                      label={"CPU Usage"}
+                                     onDragStart={handleDraggableDragStart}/>
+                      <DraggableStat icon={<HeartPulse className={"mr-2 h-6 w-6"}/>}
+                                     statType={StatType.HEALTHCHECK}
+                                     label={"Healthcheck"}
                                      onDragStart={handleDraggableDragStart}/>
                     </div>
                   </AccordionContent>

@@ -134,7 +134,7 @@ class DashboardCellService {
                                 core2Percent: Math.random() * 100,
                                 core3Percent: Math.random() * 100,
                                 core4Percent: Math.random() * 100,
-                                coreNum: Math.floor(Math.random() * 4) + 1,
+                                coreNum: 4,
                                 time: this.generateTimestamp(new Date(Date.now()), idx).toISOString(),
                                 cellId: dashboardCell.id
                             }))

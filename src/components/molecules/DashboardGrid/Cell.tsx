@@ -4,7 +4,7 @@ import {fetcher} from "@/utils/lib/fetcher";
 import className from "classnames";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/atoms/card";
 import {StatType} from "@/utils/types";
-import {Cpu, MemoryStick, Timer} from "lucide-react";
+import {Check, Cpu, MemoryStick, Server, ServerCrash, ServerOff, Timer, X} from "lucide-react";
 import {Line, LineChart, ResponsiveContainer, XAxis, YAxis} from "recharts";
 
 interface CellProps {
@@ -43,7 +43,7 @@ const AvgBuildTimeCell: React.FC<CellProps> = ({ id, w, h }) => {
             <CellHeader icon={<Timer className={'w-4 h-4 mr-2'}/>} longLabel={"Avg build time"} shortLabel={"Avg build time"} w={w} h={h}/>
         </CardHeader>
         <CardContent className={'flex-grow flex flex-col justify-center'}>
-            { data ? <h2 className={className({ 'text-xl': w === 1, 'text-4xl': w === 2 })}>{ data.avg }s</h2> : "Loading"}
+            { data ? <h2 className={className({ 'text-xl': w === 1, 'text-4xl': w === 2 })}>{ data.avg.toFixed(2) }s</h2> : "Loading"}
         </CardContent>
     </>
 }
@@ -129,12 +129,29 @@ const RAMUsageCell: React.FC<CellProps> = ({ id, w, h }) => {
         </>
 }
 
+const HealthCheckCell: React.FC<CellProps> = (props) => {
+    const { data } = useSWR(`/api/dashboard-cells/${props.id}/data`, fetcher, { refreshInterval: 10000 })
+
+    return <div className={"flex items-center justify-center flex-grow gap-2"}>
+        {
+            data ? <>
+                    {
+                        data.alive ? <Server className={"w-6 h-6"}/> : <ServerOff className={"w-6 h-6"}/>
+                    }
+                <div className={"text-lg"}>192.168.168.5</div>
+                { data.alive ? <div className={"bg-green-600 rounded-full p-1"}><Check className={"w-4 h-4"}/></div> : <div className={"bg-red-600 rounded-full p-1"}><X className={"w-4 h-4"}/></div> }
+            </> : "Loading"
+        }
+    </div>
+}
+
 const Cell: React.FC<CellProps> = (props) => {
     return (
         <Card className={className('h-full', 'w-full', 'flex', 'flex-col')}>
             { props.statType === StatType.STATS_AVG_BUILD_TIME && <AvgBuildTimeCell {...props}/> }
             { props.statType === StatType.SYSTEM_RAM_USAGE && <RAMUsageCell {...props}/> }
             { props.statType === StatType.SYSTEM_CPU_USAGE && <CPUUsageCell {...props}/> }
+            { props.statType === StatType.HEALTHCHECK && <HealthCheckCell {...props}/> }
         </Card>
     );
 };

@@ -35,6 +35,12 @@ const MinWMinHDict = {
     minH: 2,
     maxW: 6,
     maxH: 3
+  },
+  [StatType.HEALTHCHECK]: {
+    minW: 2,
+    minH: 1,
+    maxW: 2,
+    maxH: 1
   }
 }
 
