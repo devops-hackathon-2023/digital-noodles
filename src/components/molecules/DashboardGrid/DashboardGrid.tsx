@@ -25,8 +25,8 @@ const MinWMinHDict = {
     maxH: 2
   },
   [StatType.SYSTEM_CPU_USAGE]: {
-    minW: 1,
-    minH: 1,
+    minW: 2,
+    minH: 2,
     maxW: 6,
     maxH: 3
   },
@@ -119,7 +119,7 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({
           rowHeight={size.width ? (size.width - 11 * 8) / 12 : 30}
           width={size.width ? size.width : 1200}
           onDrop={onDrop}
-          onLayoutChange={()=>{}}
+          onLayoutChange={handleLayoutChange}
           isDroppable={true}
         >
           {

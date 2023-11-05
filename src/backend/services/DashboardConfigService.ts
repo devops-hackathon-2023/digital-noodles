@@ -65,7 +65,6 @@ class DashboardConfigService {
 
         switch (dashboardType) {
             case DashboardType.DEPLOYMENT_UNIT:
-
                 const configEnvs = [...new Set<string>(dashboardConfigs.map((config: DashboardConfig) => config.env))]
                 const deploymentEnvs = await this.DOPOClient.getDeployments({ deploymentUnitId: typeId })
                     .then((deployment) =>

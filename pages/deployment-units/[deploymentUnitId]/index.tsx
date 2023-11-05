@@ -10,26 +10,16 @@ import {swapItemWithId} from "@/utils/helpers";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/atoms/tabs";
 import {Button} from "@/components/atoms/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuPortal,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger
-} from '@/components/atoms/dropdown-menu';
-import {
-  AreaChart,
   Blocks,
   Boxes,
   Check,
-  Cpu, GitBranch,
+  Cpu,
+  GitBranch,
   GitCommitHorizontal,
-  HeartPulse,
   MemoryStick,
   Pencil,
-  Plus, Rocket
+  Plus,
+  Rocket
 } from "lucide-react";
 import useOutsideClick from "@/utils/useOutsideClick";
 import DraggableStat from "@/components/molecules/DraggableStat/DraggableStat";
@@ -38,16 +28,7 @@ import PlatformLayout from "@/components/layouts/platformLayout";
 import {isMobile} from "react-device-detect";
 
 
-import {
-  Sheet,
-  SheetClose,
-  SheetContent, SheetContentNoOverlay,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/atoms/sheet"
+import {Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger,} from "@/components/atoms/sheet"
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from '@/components/atoms/accordion';
 
 interface DeploymentUnitPageProps {
@@ -89,8 +70,7 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({deploymentUnitId
       .then((response) => response.data)
       .then((data) => {
         return mutateDashboardConfigs((layouts: any) => {
-          const newLayouts = swapItemWithId(layouts, 'id', data.id, data);
-          return newLayouts
+          return swapItemWithId(layouts, 'id', data.id, data)
         })
       });
   }

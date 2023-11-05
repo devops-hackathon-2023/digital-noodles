@@ -24,6 +24,10 @@ export type GetDeploymentUnitsArgs = {
     size?: number
 }
 
+export type GetQualityGatesArgs = {
+    deploymentUnitId?: string
+}
+
 export type GetAppModulesArgs = { size?: number }
 
 export type Deployment = {
@@ -42,6 +46,18 @@ export type Deployment = {
     duration: number;
 };
 
+export type QualityGate = {
+    versionId: string,
+    deploymentUnitId: string,
+    appModuleId: string,
+    sasId: string,
+    type: string,
+    result: string,
+    percent: number,
+    rating: "A" | "B" | "C" | "D" | "E" | "F",
+    createdAt: string
+}
+
 @injectable()
 class DOPOClient {
     private axios: Axios
@@ -56,9 +72,15 @@ class DOPOClient {
     }
 
     public async getDeployments(args: GetDeploymentsArgs): Promise<DOPOResponse<Deployment>> {
-        return await this.axios.get('/deployments', { params: {
-                deploymentUnitId: args.deploymentUnitId
-            }})
+        const params: any = {
+            deploymentUnitId: args.deploymentUnitId
+        }
+
+        if(args.env) {
+            params.environment = args.env
+        }
+
+        return await this.axios.get('/deployments', { params })
             .then((response) => response.data)
     }
 
@@ -77,6 +99,17 @@ class DOPOClient {
             params: {
                 size: args.size ?? 30
             }
+        }).then(response => response.data)
+    }
+
+    async getQualityGates(args: GetQualityGatesArgs): Promise<DOPOResponse<QualityGate>> {
+        const params: any = {}
+        if(args.deploymentUnitId) {
+            params.deploymentUnitId = args.deploymentUnitId
+        }
+
+        return await this.axios.get('/quality-gates', {
+            params
         }).then(response => response.data)
     }
 
