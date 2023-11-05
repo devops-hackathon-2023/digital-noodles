@@ -191,7 +191,22 @@ class DashboardCellService {
                     deploymentUnitId: dashboardCell.dashboardConfig.typeId
                 });
 
-                console.log(qualityGates);
+                let passed = 0;
+                let failed = 0;
+                // PASSED, FAILED
+                qualityGates.page.forEach((qualityGate) => {
+                    switch (qualityGate.result) {
+                        case "PASSED":
+                            passed = passed + 1
+                            break
+                        case "FAILED":
+                            failed = failed + 1
+                            break
+                    }
+                })
+                return {
+                    passed, failed
+                }
             }
         }
     }

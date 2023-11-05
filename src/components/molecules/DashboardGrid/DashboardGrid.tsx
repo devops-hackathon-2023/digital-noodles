@@ -41,7 +41,13 @@ const MinWMinHDict = {
     minH: 1,
     maxW: 2,
     maxH: 1
-  }
+  },
+      [StatType.STATS_GATES_FAILED_PASSED]: {
+  minW: 2,
+      minH: 2,
+      maxW: 2,
+      maxH: 2
+}
 }
 
 const DashboardGrid: React.FC<DashboardGridProps> = ({

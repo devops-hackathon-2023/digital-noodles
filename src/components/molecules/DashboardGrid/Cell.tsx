@@ -4,7 +4,7 @@ import {fetcher} from "@/utils/lib/fetcher";
 import className from "classnames";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/atoms/card";
 import {StatType} from "@/utils/types";
-import {Check, Cpu, MemoryStick, Server, ServerCrash, ServerOff, Timer, X} from "lucide-react";
+import {Check, Cpu, DoorClosed, MemoryStick, Server, ServerOff, Timer, X} from "lucide-react";
 import {Line, LineChart, ResponsiveContainer, XAxis, YAxis} from "recharts";
 
 interface CellProps {
@@ -145,6 +145,26 @@ const HealthCheckCell: React.FC<CellProps> = (props) => {
     </div>
 }
 
+const GatesPassedFailed : React.FC<CellProps> = (props) => {
+    const { data } = useSWR(`/api/dashboard-cells/${props.id}/data`, fetcher, { refreshInterval: 100000 })
+    return <>
+        <CardHeader>
+        <CellHeader icon={<DoorClosed className={'w-4 h-4 mr-2'}/>} longLabel={"Gates passed/failed"} shortLabel={"Gates ratio"} w={props.w} h={props.h}/>
+        </CardHeader>
+        <CardContent>
+        {
+            data ? <div>
+                <div className={"flex gap-1"}>
+                <div className={"bg-green-600 flex-grow shrink-0 text-center py-2 text-6xl rounded-md"}>{data.passed}</div>
+                <div className={"bg-red-600 flex-grow shrink-0 text-center py-2 text-6xl rounded-md"}>{data.failed}</div>
+                </div>
+                <div>{ (data.passed / (data.passed + data.failed) * 100).toFixed(1) }% Success rate</div>
+            </div> : "Loading"
+        }
+        </CardContent>
+    </>
+}
+
 const Cell: React.FC<CellProps> = (props) => {
     return (
         <Card className={className('h-full', 'w-full', 'flex', 'flex-col')}>
@@ -152,6 +172,7 @@ const Cell: React.FC<CellProps> = (props) => {
             { props.statType === StatType.SYSTEM_RAM_USAGE && <RAMUsageCell {...props}/> }
             { props.statType === StatType.SYSTEM_CPU_USAGE && <CPUUsageCell {...props}/> }
             { props.statType === StatType.HEALTHCHECK && <HealthCheckCell {...props}/> }
+            { props.statType === StatType.STATS_GATES_FAILED_PASSED && <GatesPassedFailed {...props}/> }
         </Card>
     );
 };

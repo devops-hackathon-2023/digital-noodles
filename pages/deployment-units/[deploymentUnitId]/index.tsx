@@ -188,6 +188,10 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({deploymentUnitId
                                      statType={StatType.STATS_AVG_BUILD_TIME}
                                      label={"Average build time"}
                                      onDragStart={handleDraggableDragStart}/>
+                      <DraggableStat icon={<Blocks className={"mr-2 h-6 w-6"}/>}
+                                     statType={StatType.STATS_GATES_FAILED_PASSED}
+                                     label={"Gates passed/failed"}
+                                     onDragStart={handleDraggableDragStart}/>
                     </div>
                   </AccordionContent>
                 </AccordionItem>
