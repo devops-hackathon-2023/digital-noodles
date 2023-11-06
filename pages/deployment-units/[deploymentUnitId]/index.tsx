@@ -10,6 +10,7 @@ import {swapItemWithId} from "@/utils/helpers";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/atoms/tabs";
 import {Button} from "@/components/atoms/button";
 import {
+  ArrowDown,
   Blocks,
   Boxes,
   Check,
@@ -32,6 +33,8 @@ import {Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTri
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from '@/components/atoms/accordion';
 import DeploymentsDataTable from "@/components/organisms/deployment-units/deploymentsDataTable/deploymentsDataTable";
 import {columns} from "@/components/organisms/deployment-units/deploymentsDataTable/columns";
+import {DropdownMenu, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger} from "@/components/atoms/dropdown-menu";
+import {DropdownMenuContent, DropdownMenuLabel} from "@radix-ui/react-dropdown-menu";
 
 interface DeploymentUnitPageProps {
   deploymentUnitId: string
@@ -39,14 +42,17 @@ interface DeploymentUnitPageProps {
 
 const VersionInfo: React.FC<{
   icon: React.ReactNode,
-  text?: string
+  text?: string,
+  droppable?: boolean
 }> = ({
         icon,
-        text
+        text,
+        droppable
       }) => (
   <div className={"flex gap-2 px-3 py-1 rounded-md bg-neutral-100 text-black text-sm items-center"}>
     {icon}
     {text}
+    { droppable && <ArrowDown className={"w-4 h-4"}/> }
   </div>
 )
 
@@ -62,7 +68,13 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({deploymentUnitId
   const [dropdownMenuOpen, setDropdownMenuOpen] = useState(false)
   const [editing, setEditing] = useState(false)
   const [selectedEnv, setSelectedEnv] = useState<string | undefined>()
-  const { data: deployments, mutate: mutateDeployments } = useSWR(() => selectedEnv ? `https://dopo.fly.dev/api/v1/dopo/deployments?enviroment=${selectedEnv}&deploymentUnitId=${deploymentUnitId}` : null, flyIoFetcher)
+  const [selectedVersion, setSelectedVersion] = useState(undefined)
+  const { data: deployments, mutate: mutateDeployments } = useSWR(() => (selectedEnv && selectedVersion) ? `https://dopo.fly.dev/api/v1/dopo/deployments?enviroment=${selectedEnv}&deploymentUnitId=${deploymentUnitId}&versionId=${selectedVersion.id}` : null, flyIoFetcher)
+
+  useEffect(() => {
+    if(deploymentUnitVersions && deploymentUnitVersions.page.length > 0)
+      setSelectedVersion(deploymentUnitVersions.page[0])
+  }, [deploymentUnitVersions]);
 
   useEffect(() => {
     if(dashboardConfigs && dashboardConfigs.length > 0) {
@@ -114,53 +126,72 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({deploymentUnitId
             </Button>
           </div>
           <div className={"flex gap-2 my-4"}>
-            <VersionInfo icon={<GitBranch className={"w-4 h-4"}/>} text={lastDeploymentUnitVersion?.gitBranch}/>
+            <VersionInfo icon={<GitBranch className={"w-4 h-4"}/>} text={selectedVersion?.gitBranch}/>
             <VersionInfo icon={<GitCommitHorizontal className={"w-4 h-4"}/>}
-                         text={`#${lastDeploymentUnitVersion?.gitCommitHash.slice(0, 7)}`}/>
-            <VersionInfo icon={<Rocket className={"w-4 h-4"}/>} text={lastDeploymentUnitVersion?.version}/>
+                         text={`#${selectedVersion?.gitCommitHash.slice(0, 7)}`}/>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <VersionInfo icon={<Rocket className={"w-4 h-4"}/>} text={selectedVersion?.version} droppable/>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent>
+                <DropdownMenuGroup>
+                  <div className={"h-40 overflow-scroll"}>
+                  {
+                    deploymentUnitVersions?.page.map(version => (
+
+                        <DropdownMenuItem onClick={() => setSelectedVersion(version)}>{ version.version }</DropdownMenuItem>
+                    ))
+                  }
+                  </div>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <div>
             {/*@ts-ignore*/}
             {/*<DashboardGrid layout={layout} onLayoutChange={(layout) => setLayout(layout.map(layout => ({ layout: layout })))}/>*/}
             {
-              dashboardConfigs &&
-                <Tabs defaultValue={dashboardConfigs.length > 0 && dashboardConfigs[0].env} className="w-full">
+              dashboardConfigs && <>{
+                lastDeploymentUnitVersion?.id === selectedVersion?.id ?
+                  <Tabs defaultValue={dashboardConfigs.length > 0 && dashboardConfigs[0].env} className="w-full">
                     <div className={'flex justify-between w-full'}>
-                        <TabsList>
-                          {
-                            dashboardConfigs.map((layout: any) => <>
-                              <TabsTrigger value={layout.env} onClick={() => setSelectedEnv(layout.env)}>{layout.env}</TabsTrigger>
-                            </>)
-                          }
-                        </TabsList>
+                      <TabsList>
+                        {
+                          dashboardConfigs.map((layout: any) => <>
+                            <TabsTrigger value={layout.env} onClick={() => setSelectedEnv(layout.env)}>{layout.env}</TabsTrigger>
+                          </>)
+                        }
+                      </TabsList>
 
                       {!editing && <Button variant={'secondary'} onClick={() => setEditing(true)}>
-                          <Pencil className={"w-4 h-4 mr-2"}/> Edit
+                        <Pencil className={"w-4 h-4 mr-2"}/> Edit
                       </Button>}
                       {editing && <div className={"flex gap-2 flex-wrap justify-end"}>
-                          <Button variant={'secondary'} onClick={() => setEditing(false)}>
-                              <Check className={"w-4 h-4 mr-2"}/> Done
+                        <Button variant={'secondary'} onClick={() => setEditing(false)}>
+                          <Check className={"w-4 h-4 mr-2"}/> Done
+                        </Button>
+                        <SheetTrigger asChild>
+                          <Button variant="outline">
+                            <Plus className={"w-4 h-4 mr-2"}/>
+                            Add
                           </Button>
-                          <SheetTrigger asChild>
-                              <Button variant="outline">
-                                  <Plus className={"w-4 h-4 mr-2"}/>
-                                  Add
-                              </Button>
-                          </SheetTrigger>
+                        </SheetTrigger>
                       </div>
                       }
                     </div>
-                  {
-                    dashboardConfigs.map((layout: any) => <>
-                      <TabsContent value={layout.env}>
-                        <DashboardGrid editing={editing} dashboardConfigId={layout.id}
-                                       draggedStatType={draggedStatType} layout={layout.dashboardCells}
-                                       onLayoutChange={handleLayoutChange} onCellDelete={() => {
-                        }}/>
-                      </TabsContent>
-                    </>)
-                  }
-                </Tabs>
+                    {
+                      dashboardConfigs.map((layout: any) => <>
+                        <TabsContent value={layout.env}>
+                          <DashboardGrid editing={editing} dashboardConfigId={layout.id}
+                                         draggedStatType={draggedStatType} layout={layout.dashboardCells}
+                                         onLayoutChange={handleLayoutChange} onCellDelete={() => {
+                          }}/>
+                        </TabsContent>
+                      </>)
+                    }
+                  </Tabs> : <h2 class={"text-2xl text-center"}>Go to most recent deployment version to display stats</h2>
+                }</>
             }
           </div>
           <h2>Deployments</h2>
