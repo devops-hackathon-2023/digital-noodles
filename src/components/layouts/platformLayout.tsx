@@ -15,7 +15,7 @@ const PlatformLayout: React.FC<PlatformLayoutProps> = ({children}) => {
     required: true,
     onUnauthenticated() {
       setTimeout(() => router.push("/login")
-        , 700)
+        , 1000)
     },
   })
 

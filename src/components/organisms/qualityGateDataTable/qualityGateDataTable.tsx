@@ -1,6 +1,3 @@
-"use client"
-
-import * as React from "react"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,10 +9,11 @@ import {
   getSortedRowModel,
   SortingState,
   useReactTable,
-  VisibilityState,
-} from "@tanstack/react-table"
+  VisibilityState
+} from "@tanstack/react-table";
+import * as React from "react";
+import {qualityGateRatings, qualityGateResults, qualityGateTypes} from "@/utils/types";
 import DataTable from "@/components/molecules/DataTable/DataTable";
-import {deploymentUnitsLanguages} from "@/utils/types";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -27,15 +25,16 @@ interface DataTableProps<TData, TValue> {
   pageNumber: number,
 }
 
-export function DeploymentUnitsDataTable<TData, TValue>({
-                                                          columns,
-                                                          data,
-                                                          handleTablePage,
-                                                          handleTableSize,
-                                                          pageSize,
-                                                          pageNumber,
-                                                          pageCount
-                                                        }: DataTableProps<TData, TValue>) {
+
+export function QualityGateDataTable<TData, TValue>({
+                                                      columns,
+                                                      data,
+                                                      handleTablePage,
+                                                      handleTableSize,
+                                                      pageSize,
+                                                      pageNumber,
+                                                      pageCount
+                                                    }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
@@ -73,11 +72,23 @@ export function DeploymentUnitsDataTable<TData, TValue>({
 
   return (
     <DataTable
-      filters={[{
-        title: "Language",
-        column: "language",
-        options: deploymentUnitsLanguages
-      }]}
+      filters={[
+        {
+          title: "Rating",
+          column: "rating",
+          options: qualityGateRatings
+        },
+        {
+          title: "Result",
+          column: "result",
+          options: qualityGateResults
+        },
+        {
+          title: "Type",
+          column: "type",
+          options: qualityGateTypes
+        },
+      ]}
       table={table}
       columns={columns}
       handleTablePage={handleTablePage}
@@ -85,3 +96,5 @@ export function DeploymentUnitsDataTable<TData, TValue>({
     />
   )
 }
+
+export default QualityGateDataTable

@@ -4,13 +4,14 @@ import {ModeToggle} from "@/components/atoms/mode-toggle";
 import {usePathname} from "next/navigation";
 import Link from "next/link";
 import TeamSwitcher from "@/components/organisms/team-switcher";
-import {LayoutDashboard, Menu, Package, Puzzle, Settings, User} from "lucide-react";
+import {Boxes, LayoutDashboard, Menu, Puzzle, Settings, User} from "lucide-react";
 
 import {Button} from "@/components/atoms/button";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/atoms/avatar";
 import {Sheet, SheetContent, SheetFooter, SheetHeader, SheetTrigger} from "@/components/atoms/sheet";
 import {Separator} from "@/components/atoms/separator";
 import {useSession} from "next-auth/react";
+import React from "react";
 
 const Header = () => {
   const pathname = usePathname()
@@ -94,7 +95,7 @@ const Header = () => {
               <span>App modules</span>
             </Link>
             <Link href={"/deployment-units"} className={"flex items-center gap-2"}>
-              <Package className="mr-2 h-4 w-4"/>
+              <Boxes className="mr-2 h-4 w-4"/>
               <span>Deployment units</span>
             </Link>
             <TeamSwitcher className={"w-full"}/>

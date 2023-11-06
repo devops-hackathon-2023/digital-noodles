@@ -2,6 +2,8 @@ import {AppModuleResponse} from "@/utils/types";
 import {ColumnDef} from "@tanstack/react-table";
 import {DataTableColumnHeader} from "@/components/molecules/DataTable/ColumnHeader";
 import Link from "next/link";
+import {Button} from "@/components/atoms/button";
+import {Github} from "lucide-react";
 
 export const columns: ColumnDef<AppModuleResponse>[] = [
   {
@@ -35,6 +37,22 @@ export const columns: ColumnDef<AppModuleResponse>[] = [
       <DataTableColumnHeader column={column} title="ID"/>
     ),
     cell: ({row}) => <div className="w-[200px]">{row.getValue("id")}</div>,
+    enableSorting: false,
+    enableHiding: true,
+  },
+  {
+    accessorKey: "repositoryUrl",
+    header: ({column}) => (
+      <DataTableColumnHeader column={column} title="Repository"/>
+    ),
+    cell: ({row}) => <div className="w-[200px]">
+      <Link href={row.getValue("repositoryUrl")} target={"_blank"}>
+        <Button variant={"link"}>
+          <Github className={'mr-2'}/>
+          Repository
+        </Button>
+      </Link>
+    </div>,
     enableSorting: false,
     enableHiding: true,
   },

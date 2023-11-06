@@ -42,57 +42,6 @@ const cards = [
   }
 ];
 
-const DeploymentCard = ({
-                          name,
-                          icon: Icon,
-                          status
-                        }) => (
-  <Card>
-    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle className="text-sm font-medium">
-        {name}
-      </CardTitle>
-      <Icon/>
-    </CardHeader>
-    <CardContent>
-      <div className="text-2xl font-bold">{status}</div>
-      <p className="text-xs text-muted-foreground">
-        Last deploy: 28.10.2023
-      </p>
-    </CardContent>
-  </Card>
-);
-
-
-const DetailedCard = ({
-                        title,
-                        subTitle,
-                        icon: Icon
-                      }) => (
-  <Card>
-    <CardHeader className="flex flex-row items-center justify-between space-y-2 pb-7">
-      <CardTitle className="text-2xl font-bold">
-        {title}
-        <div className="text-sm font-light">{subTitle}</div>
-      </CardTitle>
-    </CardHeader>
-    <CardContent className="flex-col flex gap-5">
-      {[...Array(3)].map((value, index, array) => (
-        <div className="flex items-center justify-between" key={index}>
-          <div className="flex w-full items-center gap-20">
-            <div className="flex flex-col flex-shrink-0">
-              <div className="font-medium">loans</div>
-              <div className="text-sm font-light">loans-fe</div>
-            </div>
-            <Progress value={33} className="w-[60%]"/>
-          </div>
-          <Icon/>
-        </div>
-      ))}
-    </CardContent>
-  </Card>
-);
-
 const SasesList = () => {
   return (
     <Card>
@@ -151,15 +100,6 @@ const DashboardView = () => {
           Edit
         </Button>
       </div>
-
-      <div className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {deployments.map((info: any, index: number) => <DeploymentCard {...info} key={index}/>)}
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
-        {cards.map((info, index) => <DetailedCard {...info} key={index}/>)}
-      </div>
-
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
         <SasesList/>
       </div>

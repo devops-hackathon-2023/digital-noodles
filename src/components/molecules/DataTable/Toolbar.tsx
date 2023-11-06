@@ -35,9 +35,10 @@ export function Toolbar<TData>({
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        {filters !== undefined && filters.map((f: Filter) =>
+        {filters !== undefined && filters.map((f: Filter, index:number) =>
           (
             <DataTableFacetedFilter
+              key={index}
               column={table.getColumn(f.column)}
               title={f.title}
               options={f.options}

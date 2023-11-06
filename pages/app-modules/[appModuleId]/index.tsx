@@ -22,6 +22,8 @@ const Index = () => {
 
   const {data: appModule} = useSWR(() => appModuleId ? `app-modules/${appModuleId}` : null, flyIoFetcher)
 
+  const {data: last100QualityGates} = useSWR(()=>appModuleId ? `quality-gates?page=0&size=20&sort=createdAt&order=desc&appModuleId=${appModuleId}`:null, flyIoFetcher)
+
   const handleDataTablePage = useCallback((page: number) => {
     setDataTablePage(page)
   }, [])
@@ -38,6 +40,7 @@ const Index = () => {
   return (
     <PlatformLayout>
       <AppModuleDashboardView
+        last100QualityGates={last100QualityGates}
         deploymentUnits={deploymentUnits}
         appModule={appModule}
         dataTablePageSize={dataTableSize}

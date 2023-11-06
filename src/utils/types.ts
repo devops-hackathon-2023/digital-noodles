@@ -1,7 +1,10 @@
 export interface DashboardGridCellConfig {
-    id: string,
-    statType: string,
-    x: number, y: number, w: number, h: number
+  id: string,
+  statType: string,
+  x: number,
+  y: number,
+  w: number,
+  h: number
 }
 
 export interface FinishDeploymentRequest {
@@ -152,40 +155,121 @@ export enum StatType {
   STATS_GATES_FAILED_PASSED = "STATS_GATES_FAILED_PASSED",
 }
 
-export enum SortType{
-  ASC="asc",
-  DESC="desc"
+export enum SortType {
+  ASC = "asc",
+  DESC = "desc"
 }
 
-export const languages = [
+export const deploymentUnitsLanguages = [
   {
     value: "JAVASCRIPT",
     label: "JAVASCRIPT",
-    // icon: QuestionMarkCircledIcon,
   },
   {
     value: "JAVA",
     label: "JAVA",
-    // icon: CircleIcon,
   },
   {
     value: "KOTLIN",
     label: "KOTLIN",
-    // icon: StopwatchIcon,
   },
   {
     value: "PLSQL",
     label: "PLSQL",
-    // icon: CheckCircledIcon,
   },
   {
     value: "PYTHON",
     label: "PYTHON",
-    // icon: CrossCircledIcon,
   },
   {
     value: "SHELL",
     label: "SHELL",
-    // icon: CrossCircledIcon,
   },
 ]
+
+export const qualityGateTypes = [
+  {
+    value: "CODE_COVERAGE",
+    label: "Code coverage",
+  },
+  {
+    value: "XRAY_DOCKER",
+    label: "XRay Docker",
+  },
+  {
+    value: "DUPLICATED_LINES",
+    label: "Deuplicated lines",
+  },
+  {
+    value: "MAINTAINABILITY_RATING",
+    label: "Maintainability rating",
+  },
+  {
+    value: "RELIABILITY_RATING",
+    label: "Reliability rating",
+  },
+  {
+    value: "SECURITY_HOTSPOTS_REVIEWED",
+    label: "Security hotspots reviewed",
+  },
+  {
+    value: "SECURITY_RATING",
+    label: "Security rating",
+  },
+]
+
+export const qualityGateResults = [
+  {
+    value: "PASSED",
+    label: "Passes",
+  },
+  {
+    value: "FAILED",
+    label: "Failed",
+  }
+]
+
+export const qualityGateRatings = [
+  {
+    value: "A",
+    label: "A",
+    color: "#27d54a"
+  },
+  {
+    value: "B",
+    label: "B",
+    color: "#95d527"
+  },
+  {
+    value: "C",
+    label: "C",
+    color: "#d5b827"
+  },
+  {
+    value: "D",
+    label: "D",
+    color: "#d59827"
+  },
+  {
+    value: "E",
+    label: "E",
+    color: "#d55527"
+  },
+  {
+    value: "F",
+    label: "F",
+    color: "#d53b27"
+  },
+  {
+    value: "null",
+    label: "Null",
+    color: "#9f9f9f"
+  },
+]
+
+export interface DeploymentDecorate {
+  id: string,
+  deploymentUnit: DeploymentUnitResponse,
+  deployment: DeploymentResponse
+  version: DeploymentUnitVersionResponse
+}
