@@ -30,6 +30,8 @@ import {isMobile} from "react-device-detect";
 
 import {Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger,} from "@/components/atoms/sheet"
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from '@/components/atoms/accordion';
+import DeploymentsDataTable from "@/components/organisms/deployment-units/deploymentsDataTable/deploymentsDataTable";
+import {columns} from "@/components/organisms/deployment-units/deploymentsDataTable/columns";
 
 interface DeploymentUnitPageProps {
   deploymentUnitId: string
@@ -54,13 +56,23 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({deploymentUnitId
     mutate: mutateDashboardConfigs
   } = useSWR<any>(`/api/dashboard-configs?typeId=${deploymentUnitId}&dashboardType=DEPLOYMENT_UNIT`, fetcher)
   const {data: deploymentUnit} = useSWR<any>(`https://dopo.fly.dev/api/v1/dopo/deployment-units/${deploymentUnitId}`, flyIoFetcher)
-  const {data: deploymentUnitVersions} = useSWR<any>(`https://dopo.fly.dev/api/v1/dopo/deployment-units/${deploymentUnitId}/deployment-unit-versions`, flyIoFetcher)
+  const {data: deploymentUnitVersions} = useSWR<any>(`https://dopo.fly.dev/api/v1/dopo/deployment-units/${deploymentUnitId}/deployment-unit-versions?order=desc&sort=version`, flyIoFetcher)
   const [lastDeploymentUnitVersion, setLastDeploymentUnitVersion] = useState<DeploymentUnitVersionResponse | undefined>(undefined)
   const [draggedStatType, setDraggedStatType] = useState<string | undefined>(undefined)
   const [dropdownMenuOpen, setDropdownMenuOpen] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [selectedEnv, setSelectedEnv] = useState<string | undefined>()
+  const { data: deployments, mutate: mutateDeployments } = useSWR(() => selectedEnv ? `https://dopo.fly.dev/api/v1/dopo/deployments?enviroment=${selectedEnv}&deploymentUnitId=${deploymentUnitId}` : null, flyIoFetcher)
 
-  console.log(deploymentUnitVersions)
+  useEffect(() => {
+    if(dashboardConfigs && dashboardConfigs.length > 0) {
+      setSelectedEnv(dashboardConfigs[0].env)
+    }
+  }, [dashboardConfigs]);
+
+  useEffect(() => {
+    mutateDeployments()
+  }, [selectedEnv]);
 
   const wrapperRef = useRef(null);
   useOutsideClick(wrapperRef, () => setDropdownMenuOpen(false));
@@ -117,7 +129,7 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({deploymentUnitId
                         <TabsList>
                           {
                             dashboardConfigs.map((layout: any) => <>
-                              <TabsTrigger value={layout.env}>{layout.env}</TabsTrigger>
+                              <TabsTrigger value={layout.env} onClick={() => setSelectedEnv(layout.env)}>{layout.env}</TabsTrigger>
                             </>)
                           }
                         </TabsList>
@@ -151,6 +163,8 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({deploymentUnitId
                 </Tabs>
             }
           </div>
+          <h2>Deployments</h2>
+          <DeploymentsDataTable data={deployments ? deployments.page : []} columns={columns}/>
           <SheetContent side={isMobile ? 'bottom' : 'right'}>
             <SheetHeader>
               <SheetTitle>Add new widget</SheetTitle>
