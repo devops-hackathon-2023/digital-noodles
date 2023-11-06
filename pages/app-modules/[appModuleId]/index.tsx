@@ -3,7 +3,7 @@ import {PageResponseAppModuleResponse, PageResponseDeploymentUnitResponse, SortT
 import PlatformLayout from "@/components/layouts/platformLayout";
 import AppModuleDashboardView from "@/components/organisms/app-modules/appModuleDashboardView";
 import useSWR from "swr";
-import {flyIoFetcher} from "@/utils/lib/fetcher";
+import {fetcher, flyIoFetcher} from "@/utils/lib/fetcher";
 import {useCallback, useEffect, useState} from "react";
 
 const Index = () => {
@@ -12,6 +12,9 @@ const Index = () => {
 
   const [dataTableSize, setDataTableSize] = useState(10)
   const [dataTablePage, setDataTablePage] = useState(0)
+
+  const { data: dashboardConfig } = useSWR(() => router.query.appModuleId ? `/api/dashboard-configs?typeId=${router.query.appModuleId}&dashboardType=APP_MODULE` : null, fetcher);
+  console.log(dashboardConfig);
 
   const {
     data: deploymentUnits,

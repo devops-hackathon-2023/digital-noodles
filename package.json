@@ -36,6 +36,7 @@
     "next-auth": "^4.24.4",
     "next-connect": "^1.0.0",
     "next-themes": "^0.2.1",
+    "object-hash": "^3.0.0",
     "octokit": "^3.1.1",
     "react": "^18",
     "react-beautiful-dnd": "^13.1.1",
@@ -53,6 +54,7 @@
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/object-hash": "^3.0.5",
     "@types/react": "^18",
     "@types/react-beautiful-dnd": "^13.1.6",
     "@types/react-dom": "^18",

@@ -25,8 +25,8 @@ const MinWMinHDict = {
     maxH: 2
   },
   [StatType.SYSTEM_CPU_USAGE]: {
-    minW: 1,
-    minH: 1,
+    minW: 2,
+    minH: 2,
     maxW: 6,
     maxH: 3
   },
@@ -35,7 +35,19 @@ const MinWMinHDict = {
     minH: 2,
     maxW: 6,
     maxH: 3
-  }
+  },
+  [StatType.HEALTHCHECK]: {
+    minW: 2,
+    minH: 1,
+    maxW: 2,
+    maxH: 1
+  },
+      [StatType.STATS_GATES_FAILED_PASSED]: {
+  minW: 2,
+      minH: 2,
+      maxW: 2,
+      maxH: 2
+}
 }
 
 const DashboardGrid: React.FC<DashboardGridProps> = ({
@@ -119,7 +131,7 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({
           rowHeight={size.width ? (size.width - 11 * 8) / 12 : 30}
           width={size.width ? size.width : 1200}
           onDrop={onDrop}
-          onLayoutChange={()=>{}}
+          onLayoutChange={handleLayoutChange}
           isDroppable={true}
         >
           {

@@ -104,3 +104,30 @@ model RamUsageMock {
     time       String
     cellId     String
 }
+
+model CpuUsageMock {
+    id              String @id @default(cuid())
+    core1Percent    Int
+    core2Percent    Int
+    core3Percent    Int
+    core4Percent    Int
+    coreNum         Int
+    time            String
+    cellId          String
+}
+
+model DiskUsageMock {
+    id              String @id @default(cuid())
+    maximumCapacity Int
+    usedCapacity    Int
+    diskIdentifier  String
+    time            String
+    cellId          String
+}
+
+model BandwidthUsageMock {
+    id              String @id @default(cuid())
+    time            String
+    amount          Int
+    cellId          String
+}
