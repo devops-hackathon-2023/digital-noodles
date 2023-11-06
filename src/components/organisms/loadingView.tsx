@@ -6,15 +6,15 @@ import React from "react";
 
 const LoadingView = () => {
   const inlineStylS = {
-    animation: 'moveLeftToOrigin 0.2s ease',
+    animation: 'moveLeftToOrigin 0.5s ease',
   };
 
   const inlineStylDn = {
-    animation: 'moveRightToOrigin 0.2s ease',
+    animation: 'moveRightToOrigin 0.5s ease',
   };
 
   const renderDelay = {
-    animation: 'renderDelay 0.2s forward'
+    animation: 'renderDelay 1.2s forward'
   }
 
   return (

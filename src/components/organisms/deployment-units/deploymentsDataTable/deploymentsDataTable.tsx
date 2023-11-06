@@ -14,12 +14,18 @@ function DeploymentsDataTable <TData, TValue> ({
         data, columns, getCoreRowModel: getCoreRowModel()
     })
 
+    const searchByParams = {
+        key: "name",
+        placeholder: "Search by name..."
+    };
+
     return (
         <DataTable
             table={table}
             columns={columns}
             handleTablePage={() => {}}
             handleTableSize={() => {}}
+            searchByParams={searchByParams}
         />
     );
 };

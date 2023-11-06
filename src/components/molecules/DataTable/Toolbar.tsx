@@ -16,26 +16,33 @@ interface Filter {
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>,
-  filters?: Filter[]
+  filters?: Filter[],
+  searchBy: SearchBy
+}
+
+interface SearchBy {
+  key: string,
+  placeholder: string
 }
 
 export function Toolbar<TData>({
                                  table,
-                                 filters
+                                 filters,
+                                 searchBy
                                }: DataTableToolbarProps<TData>) {
 
   return (
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder="Filter app modules..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          placeholder={searchBy.placeholder}
+          value={(table.getColumn(searchBy.key)?.getFilterValue() as string) ?? ""}
           onChange={(event: any) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
+            table.getColumn(searchBy.key)?.setFilterValue(event.target.value)
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        {filters !== undefined && filters.map((f: Filter, index:number) =>
+        {filters !== undefined && filters.map((f: Filter, index: number) =>
           (
             <DataTableFacetedFilter
               key={index}

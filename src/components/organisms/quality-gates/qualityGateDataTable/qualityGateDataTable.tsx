@@ -70,6 +70,11 @@ export function QualityGateDataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
+  const searchByParams = {
+    key: "versionId",
+    placeholder: "Search by id..."
+  };
+
   return (
     <DataTable
       filters={[
@@ -93,6 +98,7 @@ export function QualityGateDataTable<TData, TValue>({
       columns={columns}
       handleTablePage={handleTablePage}
       handleTableSize={handleTableSize}
+      searchByParams={searchByParams}
     />
   )
 }

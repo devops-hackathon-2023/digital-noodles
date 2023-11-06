@@ -47,15 +47,18 @@ const DeploymentCard: React.FC<DeploymentCardProps> = ({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className={"flex gap-2"}>
-              <Badge>
-                <GitBranch className={"w-4 h-4"}/>
-                <div className={"ml-2"}>{deployment.deploymentUnitVersion.gitBranch}</div>
-              </Badge>
-              <Badge>
-                <Image src={"/jira.svg"} alt={"Jira logo"} width={15} height={15}/>
-                <div className={"ml-2"}>{deployment.deployment.changeTicketId}</div>
-              </Badge>
+            <div className={"flex flex-col gap-3"}>
+              <div className={"flex gap-2"}>
+                <Badge>
+                  <GitBranch className={"w-4 h-4"}/>
+                  <div className={"ml-2"}>{deployment.deploymentUnitVersion.gitBranch}</div>
+                </Badge>
+                <Badge>
+                  <Image src={"/jira.svg"} alt={"Jira logo"} width={15} height={15}/>
+                  <div className={"ml-2"}>{deployment.deployment.changeTicketId}</div>
+                </Badge>
+              </div>
+              <div>{deployment.deployment.finishedAt}</div>
             </div>
           </CardContent>
           <CardFooter>

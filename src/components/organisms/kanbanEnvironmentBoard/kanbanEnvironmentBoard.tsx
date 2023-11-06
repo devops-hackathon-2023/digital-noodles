@@ -51,7 +51,8 @@ const KanbanEnvironmentBoard: React.FC<KanbanEnvironmentBoardProps> = ({
       destinationColumn.splice(itemToRemoveIndex, 1);
 
       toast({
-        title: `Successfully deployed ${draggingItem.deploymentUnit.name} to ${destination.droppableId}!`,
+        title: `Successfully deployed ${draggingItem.deploymentUnit.name} v${draggingItem.deploymentUnitVersion.version} to ${destination.droppableId}!`,
+        variant: "success"
       })
 
       return {
@@ -65,7 +66,7 @@ const KanbanEnvironmentBoard: React.FC<KanbanEnvironmentBoardProps> = ({
     <DragDropContext
       onDragEnd={handleOnDragEnd}
     >
-      <div className={"md:flex-row flex-col flex gap-4 overflow-auto w-full pb-2"}>
+      <div className={"md:flex-row flex-col flex gap-4 overflow-auto w-full pb-2 no-scrollbar"}>
         {Object.keys(data).map((key: string, index: number) => {
           return (
             <Column data={data[key]} title={key} key={index}/>

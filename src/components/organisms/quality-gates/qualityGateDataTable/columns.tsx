@@ -1,20 +1,15 @@
-import {AppModuleResponse} from "@/utils/types";
+import {QualityGateResponse} from "@/utils/types";
 import {ColumnDef} from "@tanstack/react-table";
 import {DataTableColumnHeader} from "@/components/molecules/DataTable/ColumnHeader";
-import Link from "next/link";
-import {Button} from "@/components/atoms/button";
-import {Github} from "lucide-react";
 
-export const columns: ColumnDef<AppModuleResponse>[] = [
+export const columns: ColumnDef<QualityGateResponse>[] = [
   {
     accessorKey: "versionId",
     header: ({column}) => (
       <DataTableColumnHeader column={column} title="Version ID"/>
     ),
     cell: ({row}) => <div className="w-[100px]">
-      <Link href={`/deployment-units/${row.getValue("versionId")}`}>
-        {row.getValue("name")}
-      </Link>
+      {row.getValue("versionId")}
     </div>,
     enableSorting: false,
     enableHiding: true,

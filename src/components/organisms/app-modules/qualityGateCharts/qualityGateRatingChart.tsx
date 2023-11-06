@@ -5,6 +5,8 @@ import React, {useEffect, useState} from "react";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/atoms/card";
 import {calculateRatingsCount} from "@/utils/helpers";
 import {Skeleton} from "@/components/atoms/skeleton";
+import Link from "next/link";
+import {usePathname} from "next/navigation";
 
 interface QualityChartProps {
   last100QualityGates: PageResponseQualityGateResponse,
@@ -60,7 +62,9 @@ const renderActiveShape = (props: any) => {
       />
       <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none"/>
       <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none"/>
-      <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={5} textAnchor={textAnchor} fill="#999">{`${value}`}</text>
+      <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={5} textAnchor={textAnchor} fill="#999">
+        {value}
+      </text>
     </g>
   );
 };
@@ -70,6 +74,9 @@ const QualityGateRatingChart: NextPage<QualityChartProps> = ({
                                                              }) => {
   const [activeIndex, setActiveIndex] = useState(1);
   const [data, setData] = useState<any>([])
+  const pathname = usePathname()
+
+  console.log(pathname)
 
   useEffect(() => {
     if (last100QualityGates) {
@@ -87,7 +94,8 @@ const QualityGateRatingChart: NextPage<QualityChartProps> = ({
     <Card>
       <CardHeader>
         <CardTitle className="flex justify-between items-center w-full">
-          <div className="text-2xl font-bold text-center w-full"> Last 20 Quality Ratings</div>
+          <Link href={`${pathname}/quality-rates`} className="text-2xl font-bold text-center w-full">Last 20 Quality
+            Ratings</Link>
         </CardTitle>
       </CardHeader>
       <CardContent>

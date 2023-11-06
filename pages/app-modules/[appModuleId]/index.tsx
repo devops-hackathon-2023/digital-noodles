@@ -1,7 +1,7 @@
 import {useRouter} from "next/router";
 import {PageResponseAppModuleResponse, PageResponseDeploymentUnitResponse, SortType} from "@/utils/types";
 import PlatformLayout from "@/components/layouts/platformLayout";
-import AppModuleDashboardView from "@/components/organisms/app-modules/appModuleDashboardView";
+import AppModuleDetailView from "@/components/organisms/app-modules/appModuleDetailView";
 import useSWR from "swr";
 import {fetcher, flyIoFetcher} from "@/utils/lib/fetcher";
 import {useCallback, useEffect, useState} from "react";
@@ -24,7 +24,7 @@ const Index = () => {
 
   const {data: appModule} = useSWR(() => appModuleId ? `app-modules/${appModuleId}` : null, flyIoFetcher)
 
-  const {data: last100QualityGates} = useSWR(()=>appModuleId ? `quality-gates?page=0&size=20&sort=createdAt&order=desc&appModuleId=${appModuleId}`:null, flyIoFetcher)
+  const {data: qualityGates} = useSWR(()=>appModuleId ? `quality-gates?page=0&size=20&sort=createdAt&order=desc&appModuleId=${appModuleId}`:null, flyIoFetcher)
 
   const handleDataTablePage = useCallback((page: number) => {
     setDataTablePage(page)
@@ -41,8 +41,8 @@ const Index = () => {
 
   return (
     <PlatformLayout>
-      <AppModuleDashboardView
-        last100QualityGates={last100QualityGates}
+      <AppModuleDetailView
+        qualityGates={qualityGates}
         deploymentUnits={deploymentUnits}
         appModule={appModule}
         dataTablePageSize={dataTableSize}

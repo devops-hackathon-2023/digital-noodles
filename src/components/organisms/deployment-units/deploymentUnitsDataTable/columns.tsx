@@ -1,11 +1,11 @@
-import {AppModuleResponse} from "@/utils/types";
 import {ColumnDef} from "@tanstack/react-table";
 import {DataTableColumnHeader} from "@/components/molecules/DataTable/ColumnHeader";
 import Link from "next/link";
 import {Button} from "@/components/atoms/button";
 import {Github} from "lucide-react";
+import {DeploymentUnitResponse} from "@/utils/types";
 
-export const columns: ColumnDef<AppModuleResponse>[] = [
+export const columns: ColumnDef<DeploymentUnitResponse>[] = [
   {
     accessorKey: "name",
     header: ({column}) => (

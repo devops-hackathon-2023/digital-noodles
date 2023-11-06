@@ -71,6 +71,11 @@ export function DeploymentUnitsDataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
+  const searchByParams = {
+    key: "name",
+    placeholder: "Search by name..."
+  };
+
   return (
     <DataTable
       filters={[{
@@ -82,6 +87,7 @@ export function DeploymentUnitsDataTable<TData, TValue>({
       columns={columns}
       handleTablePage={handleTablePage}
       handleTableSize={handleTableSize}
+      searchByParams={searchByParams}
     />
   )
 }

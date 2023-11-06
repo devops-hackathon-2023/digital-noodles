@@ -20,7 +20,7 @@ interface AppModuleDashboardViewProps {
   deploymentUnits?: PageResponseDeploymentUnitResponse,
   appModule?: AppModuleResponse,
   dataTablePageSize: number,
-  last100QualityGates: PageResponseQualityGateResponse,
+  qualityGates: PageResponseQualityGateResponse,
   handleTableSize: (size: number) => void,
   handleTablePage: (page: number) => void,
   dashboardConfig: {
@@ -28,13 +28,13 @@ interface AppModuleDashboardViewProps {
   }
 }
 
-const AppModuleDashboardView: NextPage<AppModuleDashboardViewProps> = ({
+const AppModuleDetailView: NextPage<AppModuleDashboardViewProps> = ({
                                                                          deploymentUnits,
                                                                          appModule,
                                                                          dataTablePageSize,
                                                                          handleTableSize,
                                                                          handleTablePage,
-                                                                         last100QualityGates,
+                                                                         qualityGates,
                                                                          dashboardConfig
                                                                        }) => {
 
@@ -49,23 +49,23 @@ const AppModuleDashboardView: NextPage<AppModuleDashboardViewProps> = ({
       </div>
       {dashboardConfig === undefined ?
         <div className={"grid gap-4 md:grid-cols-1 lg:grid-cols-3"}>
-          <Skeleton className={"w-full h-20"}/>
-          <Skeleton className={"w-full h-20"}/>
-          <Skeleton className={"w-full h-20"}/>
+          <Skeleton className={"w-full h-40"}/>
+          <Skeleton className={"w-full h-40"}/>
+          <Skeleton className={"w-full h-40"}/>
         </div> : <KanbanEnvironmentBoard dashboardConfig={dashboardConfig}/>}
       <div className={"flex flex-col gap-3"}>
         <div className={"grid gap-4 md:grid-cols-1 lg:grid-cols-3"}>
-          {last100QualityGates === undefined ?
+          {qualityGates === undefined ?
             <>
-              <Skeleton className={"w-full h-20"}/>
-              <Skeleton className={"w-full h-20"}/>
-              <Skeleton className={"w-full h-20"}/>
+              <Skeleton className={"w-full h-80"}/>
+              <Skeleton className={"w-full h-80"}/>
+              <Skeleton className={"w-full h-80"}/>
             </>
             :
             <>
-              <QualityGateRatingChart last100QualityGates={last100QualityGates}/>
-              <QualityGateResultChart last100QualityGates={last100QualityGates}/>
-              <QualityGatePercentChart last100QualityGates={last100QualityGates}/>
+              <QualityGateRatingChart last100QualityGates={qualityGates}/>
+              <QualityGateResultChart last100QualityGates={qualityGates}/>
+              <QualityGatePercentChart last100QualityGates={qualityGates}/>
             </>
           }
         </div>
@@ -100,4 +100,4 @@ const AppModuleDashboardView: NextPage<AppModuleDashboardViewProps> = ({
   )
 }
 
-export default AppModuleDashboardView
+export default AppModuleDetailView
