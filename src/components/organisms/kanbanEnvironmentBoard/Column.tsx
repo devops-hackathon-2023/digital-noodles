@@ -1,9 +1,10 @@
 import {NextPage} from "next";
 import {DeploymentDecorate} from "@/utils/types";
-import {Card, CardContent, CardHeader} from "@/components/atoms/card";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/atoms/card";
 import React from "react";
 import {Droppable} from "react-beautiful-dnd";
 import DeploymentCard from "@/components/organisms/kanbanEnvironmentBoard/DeploymentCard";
+import {Cloud} from "lucide-react";
 
 interface ColumnProps {
   data: DeploymentDecorate[],
@@ -15,9 +16,12 @@ const Column: NextPage<ColumnProps> = ({
                                          title
                                        }) => {
   return (
-    <Card>
+    <Card className={"w-[100%] max-w-[400px] flex-shrink-0"}>
       <CardHeader className={"text-center"}>
-        {title}
+        <CardTitle className={"flex gap-3"}>
+          <Cloud/>
+          {title}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <Droppable droppableId={title}>

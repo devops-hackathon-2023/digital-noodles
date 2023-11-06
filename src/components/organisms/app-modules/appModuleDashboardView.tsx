@@ -1,4 +1,9 @@
-import {AppModuleResponse, PageResponseDeploymentUnitResponse, PageResponseQualityGateResponse} from "@/utils/types";
+import {
+  AppModuleResponse,
+  DeploymentDecorate,
+  PageResponseDeploymentUnitResponse,
+  PageResponseQualityGateResponse
+} from "@/utils/types";
 import {NextPage} from "next";
 import {Button} from "@/components/atoms/button";
 import {columns} from "@/components/organisms/deployment-units/deploymentUnitsDataTable/columns";
@@ -18,6 +23,9 @@ interface AppModuleDashboardViewProps {
   last100QualityGates: PageResponseQualityGateResponse,
   handleTableSize: (size: number) => void,
   handleTablePage: (page: number) => void,
+  dashboardConfig: {
+    [key: string]: DeploymentDecorate[]
+  }
 }
 
 const AppModuleDashboardView: NextPage<AppModuleDashboardViewProps> = ({
@@ -26,11 +34,12 @@ const AppModuleDashboardView: NextPage<AppModuleDashboardViewProps> = ({
                                                                          dataTablePageSize,
                                                                          handleTableSize,
                                                                          handleTablePage,
-                                                                         last100QualityGates
+                                                                         last100QualityGates,
+                                                                         dashboardConfig
                                                                        }) => {
 
   return (
-    <div className="relative flex flex-col gap-5">
+    <div className="relative flex flex-col gap-6">
       <div className="flex w-full justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:leading-[1.1]">
@@ -38,7 +47,12 @@ const AppModuleDashboardView: NextPage<AppModuleDashboardViewProps> = ({
           </h1>
         </div>
       </div>
-
+      {dashboardConfig === undefined ?
+        <div className={"grid gap-4 md:grid-cols-1 lg:grid-cols-3"}>
+          <Skeleton className={"w-full h-20"}/>
+          <Skeleton className={"w-full h-20"}/>
+          <Skeleton className={"w-full h-20"}/>
+        </div> : <KanbanEnvironmentBoard dashboardConfig={dashboardConfig}/>}
       <div className={"flex flex-col gap-3"}>
         <div className={"grid gap-4 md:grid-cols-1 lg:grid-cols-3"}>
           {last100QualityGates === undefined ?
@@ -81,7 +95,6 @@ const AppModuleDashboardView: NextPage<AppModuleDashboardViewProps> = ({
           handleTableSize={handleTablePage}
           handleTablePage={handleTableSize}
         />}
-        <KanbanEnvironmentBoard/>
       </div>
     </div>
   )

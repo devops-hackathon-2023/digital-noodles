@@ -14,7 +14,6 @@ const Index = () => {
   const [dataTablePage, setDataTablePage] = useState(0)
 
   const { data: dashboardConfig } = useSWR(() => router.query.appModuleId ? `/api/dashboard-configs?typeId=${router.query.appModuleId}&dashboardType=APP_MODULE` : null, fetcher);
-  console.log(dashboardConfig);
 
   const {
     data: deploymentUnits,
@@ -49,6 +48,7 @@ const Index = () => {
         dataTablePageSize={dataTableSize}
         handleTableSize={handleDataTableSize}
         handleTablePage={handleDataTablePage}
+        dashboardConfig={dashboardConfig}
       />
     </PlatformLayout>
   )

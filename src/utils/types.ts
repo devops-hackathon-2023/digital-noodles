@@ -271,5 +271,5 @@ export interface DeploymentDecorate {
   id: string,
   deploymentUnit: DeploymentUnitResponse,
   deployment: DeploymentResponse
-  version: DeploymentUnitVersionResponse
+  deploymentUnitVersion: DeploymentUnitVersionResponse
 }
