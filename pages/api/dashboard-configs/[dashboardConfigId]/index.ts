@@ -2,7 +2,6 @@ import "reflect-metadata"
 import "@/backend/prisma/symbols"
 import {createRouter} from "next-connect";
 import {NextApiRequest, NextApiResponse} from "next";
-import {auth} from "@/backend/auth/middleware";
 import {container} from "tsyringe";
 import DashboardConfigService from "@/backend/services/DashboardConfigService";
 import {plainToClass} from "class-transformer";

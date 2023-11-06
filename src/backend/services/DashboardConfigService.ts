@@ -1,12 +1,11 @@
-import {DashboardCell, DashboardConfig, PrismaClient, StatType } from "@prisma/client";
+import {DashboardCell, DashboardConfig, PrismaClient, StatType} from "@prisma/client";
 import {inject, injectable} from "tsyringe";
 import {DashboardType} from "@/backend/utils/types";
 import {AuthContext} from "@/backend/auth/AuthContext";
 import {prisma} from "@/backend/prisma/implementation";
-import axios from "axios";
-import config from "tailwindcss/defaultConfig";
 import DOPOClient from "@/backend/services/clients/DOPOClient";
 import UpdateDashboardConfigRequest from "@/backend/requests/UpdateDashboardConfigRequest";
+import hash from "object-hash"
 
 @injectable()
 class DashboardConfigService {
@@ -92,6 +91,45 @@ class DashboardConfigService {
 
 
                 return await this.fetchDashboardConfigs(typeId, dashboardType);
+            case DashboardType.APP_MODULE:
+                const deploymentUnits = await this.DOPOClient.getDeploymentUnits({ appModuleId: typeId, size: 100 });
+                const envs = [ "DEV", "INT", "PRS", "PRED", "PROD" ];
+                let deploymentVersionPromises: Promise<any>[] = []
+                let deploymentPromises: Promise<any>[] = []
+
+                deploymentUnits.page.forEach((deploymentUnit) => {
+                    envs.forEach((env) => {
+                        deploymentPromises.push(this.DOPOClient.getDeployments({ env, deploymentUnitId: deploymentUnit.id, sort: 'finishedAt', order: 'desc' })
+                            .then((response) => {
+                                if(response.page.length > 0)
+                                    return response.page[0]
+                                else
+                                    return null;
+                            }))
+                    })
+
+                    deploymentVersionPromises.push(
+                        this.DOPOClient.getDeploymentUnitVersions(deploymentUnit.id, { sort: 'version', order: 'desc' })
+                            .then((response) => {
+                                if(response.page.length > 0)
+                                    return response.page[0]
+                                else
+                                    return null;
+                            }))
+                })
+
+                const deployments = await Promise.all(deploymentPromises)
+                const deploymentUnitVersions = await Promise.all(deploymentVersionPromises)
+
+                const rv: any = {};
+                envs.forEach((env) => {
+                    rv[env] = deploymentUnits.page.map((deploymentUnit) => ({
+                        deploymentUnit,
+                        deploymentUnitVersion: deploymentUnitVersions.find((deploymentUnitVersion) => deploymentUnitVersion.deploymentUnitId === deploymentUnit.id) ?? null,
+                        deployment: deployments.find(deployment => deployment.deploymentUnitId === deploymentUnit.id) ?? null
+                    })).map(rvItem => ({ id: hash(rvItem), ...rvItem }))
+                })
+                return rv;
         }
 
         return {

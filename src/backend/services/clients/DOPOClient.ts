@@ -13,6 +13,14 @@ export type DOPOResponse<T> = {
 export type GetDeploymentsArgs = {
     deploymentUnitId?: string
     env?: string
+    order?: 'asc' | 'desc',
+    sort?: 'startedAt' | 'finishedAt'
+}
+
+export type GetDeploymentUnitVersionsArgs = {
+    env?: string
+    order?: 'asc' | 'desc',
+    sort?: 'version'
 }
 
 export type GetSASesArgs = {
@@ -21,6 +29,7 @@ export type GetSASesArgs = {
 }
 
 export type GetDeploymentUnitsArgs = {
+    appModuleId?: string
     size?: number
 }
 
@@ -58,6 +67,15 @@ export type QualityGate = {
     createdAt: string
 }
 
+export type DeploymentUnit = {
+    id: string;
+    name: string;
+    appModuleId: string;
+    language: 'JAVASCRIPT' | 'JAVA' | 'KOTLIN' | 'PLSQL' | 'PYTHON' | 'SHELL';
+    repositoryUrl: string;
+    sasId: string;
+}
+
 @injectable()
 class DOPOClient {
     private axios: Axios
@@ -78,6 +96,14 @@ class DOPOClient {
 
         if(args.env) {
             params.environment = args.env
+        }
+
+        if(args.sort) {
+            params.sort = args.sort
+        }
+
+        if(args.order) {
+            params.order = args.order
         }
 
         return await this.axios.get('/deployments', { params })
@@ -113,12 +139,33 @@ class DOPOClient {
         }).then(response => response.data)
     }
 
-    async getDeploymentUnits(args: GetDeploymentUnitsArgs) {
-        return await this.axios.get('/deployment-units', {
+    async getDeploymentUnits(args: GetDeploymentUnitsArgs): Promise<DOPOResponse<DeploymentUnit>> {
+        let endpoint = args.appModuleId !== undefined ? `/app-modules/${args.appModuleId}/deployment-units` : '/deployment-units';
+
+        return await this.axios.get(endpoint, {
             params: {
                 size: args.size ?? 30
             }
         }).then(response => response.data)
+    }
+
+    async getDeploymentUnitVersions(deploymentUnitId: string, args: GetDeploymentUnitVersionsArgs) {
+        const params: any = {};
+
+        if(args.env) {
+            params.environment = args.env
+        }
+
+        if(args.sort) {
+            params.sort = args.sort
+        }
+
+        if(args.order) {
+            params.order = args.order
+        }
+
+        return await this.axios.get(`/deployment-units/${deploymentUnitId}/deployment-unit-versions`, { params })
+            .then((response) => response.data)
     }
 }
 

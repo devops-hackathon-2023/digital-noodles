@@ -190,7 +190,7 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({deploymentUnitId
                         </TabsContent>
                       </>)
                     }
-                  </Tabs> : <h2 class={"text-2xl text-center"}>Go to most recent deployment version to display stats</h2>
+                  </Tabs> : <h2 className={"text-2xl text-center"}>Go to most recent deployment version to display stats</h2>
                 }</>
             }
           </div>
