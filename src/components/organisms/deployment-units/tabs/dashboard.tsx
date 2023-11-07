@@ -59,10 +59,11 @@ const Dashboard: React.FC<DashboardProps> = ({
                   <div className={'flex justify-between w-full'}>
                     <TabsList>
                       {
-                        dashboardConfigs.map((layout: any) => <>
+                        dashboardConfigs.map((layout: any, index: number) =>
                           <TabsTrigger value={layout.env}
+                                       key={index}
                                        onClick={() => setSelectedEnv(layout.env)}>{layout.env}</TabsTrigger>
-                        </>)
+                        )
                       }
                     </TabsList>
 
@@ -83,14 +84,15 @@ const Dashboard: React.FC<DashboardProps> = ({
                     }
                   </div>
                   {
-                    dashboardConfigs.map((layout: any) => <>
-                      <TabsContent value={layout.env}>
+                    dashboardConfigs.map((layout: any, index: number) =>
+                      <TabsContent value={layout.env} key={index}>
                         <DashboardGrid editing={editing} dashboardConfigId={layout.id}
+                                       key={index}
                                        draggedStatType={draggedStatType} layout={layout.dashboardCells}
                                        onLayoutChange={handleLayoutChange} onCellDelete={() => {
                         }}/>
                       </TabsContent>
-                    </>)
+                    )
                   }
                 </Tabs> :
                 <h2 className={"text-2xl text-center"}>Go to most recent deployment version to display stats</h2>

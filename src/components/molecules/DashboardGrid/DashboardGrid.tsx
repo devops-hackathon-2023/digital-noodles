@@ -42,12 +42,12 @@ const MinWMinHDict = {
     maxW: 2,
     maxH: 1
   },
-      [StatType.STATS_GATES_FAILED_PASSED]: {
-  minW: 2,
-      minH: 2,
-      maxW: 2,
-      maxH: 2
-}
+  [StatType.STATS_GATES_FAILED_PASSED]: {
+    minW: 2,
+    minH: 2,
+    maxW: 2,
+    maxH: 2
+  }
 }
 
 const DashboardGrid: React.FC<DashboardGridProps> = ({
@@ -135,8 +135,8 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({
           isDroppable={true}
         >
           {
-            layout.map((datagridCellConfig) => <div
-              key={datagridCellConfig.id}
+            layout.map((datagridCellConfig, index: number) => <div
+              key={index}
               className={classNames({
                 '-top-2 drop-shadow': editing,
                 'top-0': !editing
@@ -149,9 +149,9 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({
                     e.preventDefault()
                     onDelete(datagridCellConfig.id)
                   }} className={classNames('absolute', 'top-3', 'right-3', 'z-999')}>
-                    <Button className={"rounded-full"}>
-                        <Trash2 />
-                    </Button>
+                        <Button className={"rounded-full"}>
+                            <Trash2/>
+                        </Button>
                     </div>
                 }
                 <Cell id={datagridCellConfig.id} w={datagridCellConfig.w} h={datagridCellConfig.h}

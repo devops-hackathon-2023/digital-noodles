@@ -15,8 +15,8 @@ function DeploymentsDataTable <TData, TValue> ({
     })
 
     const searchByParams = {
-        key: "name",
-        placeholder: "Search by name..."
+        key: "id",
+        placeholder: "Search by id..."
     };
 
     return (

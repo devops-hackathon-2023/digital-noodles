@@ -69,7 +69,7 @@ const CODE = "version: 2.1\n" +
 
 const Config = () => {
   return (
-    <div className={"h-[700px] overflow-auto no-scrollbar mt-1"}>
+    <div className={"h-[700px] overflow-auto no-scrollbar"}>
       <SyntaxHighlighter
         language={"yaml"}
         style={a11yDark}

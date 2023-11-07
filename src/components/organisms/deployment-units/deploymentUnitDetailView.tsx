@@ -67,6 +67,9 @@ const DeploymentUnitDetailView: React.FC<DeploymentUnitDetailViewProps> = ({
                                                                              deployments,
                                                                              handleDraggableDragStart
                                                                            }) => {
+
+  console.log(deployments)
+
   return (
     <div className="relative flex flex-col gap-5 no-scrollbar">
       <div className={"flex gap-4 items-center w-full justify-between"}>
@@ -130,9 +133,9 @@ const DeploymentUnitDetailView: React.FC<DeploymentUnitDetailViewProps> = ({
             </SelectTrigger>
             <SelectContent className={" h-[180px]"}>
               {
-                deploymentUnitVersions?.page.map(version => (
+                deploymentUnitVersions?.page.map((version, index) => (
                   // @ts-ignore
-                  <SelectItem value={version}>
+                  <SelectItem value={version} key={index}>
                     {version.version}
                   </SelectItem>
                 ))
