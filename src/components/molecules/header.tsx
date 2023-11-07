@@ -71,14 +71,14 @@ const Header = () => {
         </div>
         <div className="flex flex-col gap-4 py-4">
           <Separator/>
-          <div className={"flex items-center gap-2"}>
+          <Link href={"/settings/profile"} className={"flex items-center gap-2"}>
             <User className="mr-2 h-4 w-4"/>
             <span>Profile</span>
-          </div>
-          <div className={"flex items-center gap-2"}>
+          </Link>
+          <Link href={"/settings"} className={"flex items-center gap-2"}>
             <Settings className="mr-2 h-4 w-4"/>
             <span>Settings</span>
-          </div>
+          </Link>
         </div>
         <SheetFooter>
           <div className="flex flex-col gap-5 py-4">

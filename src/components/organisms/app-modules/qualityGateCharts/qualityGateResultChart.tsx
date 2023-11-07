@@ -5,6 +5,8 @@ import React, {useEffect, useState} from "react";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/atoms/card";
 import {calculateResultsCount} from "@/utils/helpers";
 import {Skeleton} from "@/components/atoms/skeleton";
+import {usePathname} from "next/navigation";
+import Link from "next/link";
 
 interface QualityChartProps {
   last100QualityGates: PageResponseQualityGateResponse,
@@ -71,6 +73,8 @@ const QualityGateResultChart: NextPage<QualityChartProps> = ({
   const [activeIndex, setActiveIndex] = useState(1);
   const [data, setData] = useState<any>([])
 
+  const pathname = usePathname()
+
   useEffect(() => {
     if (last100QualityGates) {
       const countRatings = calculateResultsCount(last100QualityGates.page);
@@ -86,7 +90,8 @@ const QualityGateResultChart: NextPage<QualityChartProps> = ({
     <Card>
       <CardHeader>
         <CardTitle className="flex justify-between items-center w-full">
-          <div className="text-2xl font-bold text-center w-full"> Last 20 Quality Results</div>
+          <Link href={`${pathname}/quality-rates`} className="text-2xl font-bold text-center w-full">Last 20 Quality
+            Results</Link>
         </CardTitle>
       </CardHeader>
       <CardContent>

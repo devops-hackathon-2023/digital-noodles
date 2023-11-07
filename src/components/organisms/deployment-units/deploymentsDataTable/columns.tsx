@@ -4,6 +4,8 @@ import {DataTableColumnHeader} from "@/components/molecules/DataTable/ColumnHead
 import Image from "next/image";
 import {Check, X} from "lucide-react";
 import React from "react";
+import {CopyToClipboard} from "react-copy-to-clipboard";
+import {toast} from "@/components/ui/use-toast";
 
 export const columns: ColumnDef<DeploymentResponse>[] = [
     {
@@ -11,9 +13,16 @@ export const columns: ColumnDef<DeploymentResponse>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title={"ID"}/>
         ),
-        cell: ({ row }) => <div>
-            {row.getValue("id")}
-        </div>
+        cell: ({ row }) => <div className="w-[200px] cursor-copy">
+            <CopyToClipboard text={row.getValue("id")} onCopy={() => {
+                toast({
+                    title: "Copied to clipboard!",
+                    description: row.getValue("id"),
+                })
+            }}>
+                <div>{row.getValue("id")}</div>
+            </CopyToClipboard>
+        </div>,
     },{
         accessorKey: "deployer",
         header: ({ column }) => (

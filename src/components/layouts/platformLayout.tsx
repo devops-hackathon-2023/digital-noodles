@@ -15,13 +15,13 @@ const PlatformLayout: React.FC<PlatformLayoutProps> = ({children}) => {
     required: true,
     onUnauthenticated() {
       setTimeout(() => router.push("/login")
-        , 1000)
+        , 1300)
     },
   })
 
 
   if (status === "loading") {
-    if (pathname === "/") {
+    if (pathname === "/" || pathname === "/login") {
       return <div className="container flex min-h-screen justify-center items-center">
         <LoadingView/>
       </div>

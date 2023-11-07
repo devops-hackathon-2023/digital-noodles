@@ -100,7 +100,7 @@ const DeploymentUnitDetailView: React.FC<DeploymentUnitDetailViewProps> = ({
             <VersionInfo icon={<Rocket className={"w-4 h-4"}/>} text={selectedVersion?.version} droppable/>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent className="w-[120px] bg-card mt-2 shadow-md rounded-md">
+          <DropdownMenuContent className="w-[120px] bg-card mt-2 shadow-md rounded-md p-2 border-solid">
             <DropdownMenuGroup>
               <div className={"h-40 overflow-scroll no-scrollbar "}>
                 {

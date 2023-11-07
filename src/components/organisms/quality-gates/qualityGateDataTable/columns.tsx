@@ -1,6 +1,8 @@
 import {QualityGateResponse} from "@/utils/types";
 import {ColumnDef} from "@tanstack/react-table";
 import {DataTableColumnHeader} from "@/components/molecules/DataTable/ColumnHeader";
+import {toast} from "@/components/ui/use-toast";
+import CopyToClipboard from "react-copy-to-clipboard";
 
 export const columns: ColumnDef<QualityGateResponse>[] = [
   {
@@ -8,8 +10,15 @@ export const columns: ColumnDef<QualityGateResponse>[] = [
     header: ({column}) => (
       <DataTableColumnHeader column={column} title="Version ID"/>
     ),
-    cell: ({row}) => <div className="w-[100px]">
-      {row.getValue("versionId")}
+    cell: ({row}) => <div className="w-[200px] cursor-copy">
+      <CopyToClipboard text={row.getValue("versionId")} onCopy={() => {
+        toast({
+          title: "Copied to clipboard!",
+          description: row.getValue("versionId"),
+        })
+      }}>
+        <div>{row.getValue("versionId")}</div>
+      </CopyToClipboard>
     </div>,
     enableSorting: false,
     enableHiding: true,

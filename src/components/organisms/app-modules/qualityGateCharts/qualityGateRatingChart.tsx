@@ -76,8 +76,6 @@ const QualityGateRatingChart: NextPage<QualityChartProps> = ({
   const [data, setData] = useState<any>([])
   const pathname = usePathname()
 
-  console.log(pathname)
-
   useEffect(() => {
     if (last100QualityGates) {
       const countRatings = calculateRatingsCount(last100QualityGates.page);
