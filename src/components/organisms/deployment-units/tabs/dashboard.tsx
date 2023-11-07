@@ -6,28 +6,11 @@ import {
   PageResponseDeploymentUnitVersionResponse,
   StatType
 } from "@/utils/types";
-import {
-  ArrowDown,
-  Blocks,
-  Boxes,
-  Check,
-  Cpu,
-  GitBranch,
-  GitCommitHorizontal,
-  HeartPulse,
-  MemoryStick,
-  Pencil,
-  Plus,
-  Rocket
-} from "lucide-react";
+import {Blocks, Check, Cpu, HeartPulse, MemoryStick, Pencil, Plus} from "lucide-react";
 import {Button} from "@/components/atoms/button";
-import {DropdownMenu, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger} from "@/components/atoms/dropdown-menu";
-import {DropdownMenuContent} from "@radix-ui/react-dropdown-menu";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/atoms/tabs";
 import {Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger} from "@/components/atoms/sheet";
 import DashboardGrid from "@/components/molecules/DashboardGrid/DashboardGrid";
-import DeploymentsDataTable from "@/components/organisms/deployment-units/deploymentsDataTable/deploymentsDataTable";
-import {columns} from "@/components/organisms/deployment-units/deploymentsDataTable/columns";
 import {isMobile} from "react-device-detect";
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/atoms/accordion";
 import DraggableStat from "@/components/molecules/DraggableStat/DraggableStat";
@@ -47,7 +30,6 @@ interface DashboardProps {
   deployments: PageResponseDeploymentResponse,
   handleDraggableDragStart: (statType: StatType) => void
 }
-
 
 
 const Dashboard: React.FC<DashboardProps> = ({
@@ -70,8 +52,6 @@ const Dashboard: React.FC<DashboardProps> = ({
       <div className="relative flex flex-col gap-5 w-full">
 
         <div>
-          {/*@ts-ignore*/}
-          {/*<DashboardGrid layout={layout} onLayoutChange={(layout) => setLayout(layout.map(layout => ({ layout: layout })))}/>*/}
           {
             dashboardConfigs && <>{
               lastDeploymentUnitVersion?.id === selectedVersion?.id ?

@@ -15,6 +15,9 @@ import {
 } from "@/utils/types";
 import Dashboard from "@/components/organisms/deployment-units/tabs/dashboard";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/atoms/select";
+import Log from "@/components/organisms/deployment-units/tabs/log";
+import Config from "@/components/organisms/deployment-units/tabs/config";
+import {Label} from "@/components/atoms/label";
 
 
 interface DeploymentUnitDetailViewProps {
@@ -67,15 +70,46 @@ const DeploymentUnitDetailView: React.FC<DeploymentUnitDetailViewProps> = ({
   return (
     <div className="relative flex flex-col gap-5 no-scrollbar">
       <div className={"flex gap-4 items-center w-full justify-between"}>
-        <div className={"flex items-end gap-6 flex-wrap"}>
+        <div className={"flex items-center gap-6 flex-wrap"}>
           <div className={"flex items-center gap-4"}>
             <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:leading-[1.1]">
               {deploymentUnit?.name}
             </h1>
             <Boxes className={"w-8 h-8"}/>
           </div>
-          <Select>
-            <SelectTrigger className="w-[180px]">
+          <div className={"flex gap-2 my-4 z-40"}>
+            <VersionInfo icon={<GitBranch className={"w-4 h-4"}/>} text={selectedVersion?.gitBranch}/>
+            <VersionInfo icon={<GitCommitHorizontal className={"w-4 h-4"}/>}
+                         text={`#${selectedVersion?.gitCommitHash.slice(0, 7)}`}/>
+            {/*<DropdownMenu modal={true}>*/}
+            {/*  <DropdownMenuTrigger>*/}
+            {/*    <VersionInfo icon={<Rocket className={"w-4 h-4"}/>} text={selectedVersion?.version} droppable/>*/}
+            {/*  </DropdownMenuTrigger>*/}
+
+            {/*  <DropdownMenuContent className="w-[120px] bg-card mt-2 shadow-md rounded-md p-2 border-solid">*/}
+            {/*    <DropdownMenuGroup>*/}
+            {/*      <div className={"h-40 overflow-scroll no-scrollbar "}>*/}
+            {/*        {*/}
+            {/*          deploymentUnitVersions?.page.map(version => (*/}
+            {/*            <DropdownMenuItem onClick={() => setSelectedVersion(version)}>*/}
+            {/*              <span>{version.version}</span></DropdownMenuItem>*/}
+            {/*          ))*/}
+            {/*        }*/}
+            {/*      </div>*/}
+            {/*    </DropdownMenuGroup>*/}
+            {/*  </DropdownMenuContent>*/}
+            {/*</DropdownMenu>*/}
+          </div>
+        </div>
+        {/*<Button>*/}
+        {/*  Settings*/}
+        {/*</Button>*/}
+      </div>
+      <div className={"flex gap-2"}>
+        <div>
+          <Label>Environment</Label>
+          <Select defaultValue={"test"}>
+            <SelectTrigger className="w-[180px] mt-1">
               <SelectValue placeholder="Environment"/>
             </SelectTrigger>
             <SelectContent>
@@ -87,37 +121,29 @@ const DeploymentUnitDetailView: React.FC<DeploymentUnitDetailViewProps> = ({
             </SelectContent>
           </Select>
         </div>
-        <Button>
-          Settings
-        </Button>
-      </div>
-      <div className={"flex gap-2 my-4 z-40"}>
-        <VersionInfo icon={<GitBranch className={"w-4 h-4"}/>} text={selectedVersion?.gitBranch}/>
-        <VersionInfo icon={<GitCommitHorizontal className={"w-4 h-4"}/>}
-                     text={`#${selectedVersion?.gitCommitHash.slice(0, 7)}`}/>
-        <DropdownMenu modal={true}>
-          <DropdownMenuTrigger>
-            <VersionInfo icon={<Rocket className={"w-4 h-4"}/>} text={selectedVersion?.version} droppable/>
-          </DropdownMenuTrigger>
-
-          <DropdownMenuContent className="w-[120px] bg-card mt-2 shadow-md rounded-md p-2 border-solid">
-            <DropdownMenuGroup>
-              <div className={"h-40 overflow-scroll no-scrollbar "}>
-                {
-                  deploymentUnitVersions?.page.map(version => (
-                    <DropdownMenuItem onClick={() => setSelectedVersion(version)}>
-                      <span>{version.version}</span></DropdownMenuItem>
-                  ))
-                }
-              </div>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div>
+          <Label>Version</Label>
+          {/*// @ts-ignore*/}
+          <Select onValueChange={setSelectedVersion} value={selectedVersion}>
+            <SelectTrigger className="w-[180px] mt-1">
+              <SelectValue placeholder="Environment"/>
+            </SelectTrigger>
+            <SelectContent className={" h-[180px]"}>
+              {
+                deploymentUnitVersions?.page.map(version => (
+                  // @ts-ignore
+                  <SelectItem value={version}>
+                    {version.version}
+                  </SelectItem>
+                ))
+              }
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       <Tabs defaultValue="dashboard">
         <TabsList>
           <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-          <TabsTrigger value="resource">Resource</TabsTrigger>
           <TabsTrigger value="deployments">Deployments</TabsTrigger>
           <TabsTrigger value="log">Log</TabsTrigger>
           <TabsTrigger value="config">Config</TabsTrigger>
@@ -139,11 +165,10 @@ const DeploymentUnitDetailView: React.FC<DeploymentUnitDetailViewProps> = ({
             handleDraggableDragStart={handleDraggableDragStart}
           />
         </TabsContent>
-        <TabsContent value="resource">Change your password here.</TabsContent>
-        <TabsContent value="log">Change your password here.</TabsContent>
-        <TabsContent value="deployments"> <DeploymentsDataTable data={deployments ? deployments.page : []}
-                                                                columns={columns}/></TabsContent>
-        <TabsContent value="config">Change your password here.</TabsContent>
+        <TabsContent value="log"><Log/></TabsContent>
+        <TabsContent value="deployments"><DeploymentsDataTable data={deployments ? deployments.page : []}
+                                                               columns={columns}/></TabsContent>
+        <TabsContent value="config"><Config/></TabsContent>
       </Tabs>
     </div>
   );
