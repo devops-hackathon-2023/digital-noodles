@@ -1,9 +1,9 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {NextPage, NextPageContext} from "next";
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import useSWR from "swr";
-import {DeploymentUnitVersionResponse, StatType} from "@/utils/types";
+import {AppModuleResponse, DeploymentUnitResponse, DeploymentUnitVersionResponse, StatType} from "@/utils/types";
 import axios from "axios";
 import {swapItemWithId} from "@/utils/helpers";
 import useOutsideClick from "@/utils/useOutsideClick";
@@ -20,33 +20,37 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({deploymentUnitId
     data: dashboardConfigs,
     mutate: mutateDashboardConfigs
   } = useSWR<any>(`/api/dashboard-configs?typeId=${deploymentUnitId}&dashboardType=DEPLOYMENT_UNIT`, fetcher)
-  const {data: deploymentUnit} = useSWR<any>(`https://dopo.fly.dev/api/v1/dopo/deployment-units/${deploymentUnitId}`, flyIoFetcher)
-  const {data: deploymentUnitVersions} = useSWR<any>(`https://dopo.fly.dev/api/v1/dopo/deployment-units/${deploymentUnitId}/deployment-unit-versions?order=desc&sort=version`, flyIoFetcher)
+  const {data: deploymentUnit} = useSWR<DeploymentUnitResponse>(`/deployment-units/${deploymentUnitId}`, flyIoFetcher)
+  const {data: deploymentUnitVersions} = useSWR<any>(`/deployment-units/${deploymentUnitId}/deployment-unit-versions?order=desc&sort=version`, flyIoFetcher)
   const [lastDeploymentUnitVersion, setLastDeploymentUnitVersion] = useState<DeploymentUnitVersionResponse | undefined>(undefined)
   const [draggedStatType, setDraggedStatType] = useState<string | undefined>(undefined)
   const [dropdownMenuOpen, setDropdownMenuOpen] = useState(false)
   const [editing, setEditing] = useState(false)
-  const [selectedEnv, setSelectedEnv] = useState<string | undefined>()
+  const [selectedEnv, setSelectedEnv] = useState<string>("DEV")
   const [selectedVersion, setSelectedVersion] = useState<DeploymentUnitVersionResponse>()
   const {
     data: deployments,
     mutate: mutateDeployments
-  } = useSWR(() => (selectedEnv && selectedVersion) ? `https://dopo.fly.dev/api/v1/dopo/deployments?enviroment=${selectedEnv}&deploymentUnitId=${deploymentUnitId}&versionId=${selectedVersion.id}` : null, flyIoFetcher)
+  } = useSWR(() => (selectedEnv && selectedVersion) ? `/deployments?enviroment=${selectedEnv}&sortBy=startedAt&order=asc&deploymentUnitId=${deploymentUnitId}&versionId=${selectedVersion.id}` : null, flyIoFetcher)
+
+  const {
+    data: appModule
+  } = useSWR<AppModuleResponse>(() => deploymentUnit?.appModuleId ? `/app-modules/${deploymentUnit?.appModuleId}` : null, flyIoFetcher)
 
   useEffect(() => {
     if (deploymentUnitVersions && deploymentUnitVersions.page.length > 0)
       setSelectedVersion(deploymentUnitVersions.page[0])
   }, [deploymentUnitVersions]);
 
-  useEffect(() => {
-    if (dashboardConfigs && dashboardConfigs.length > 0) {
-      setSelectedEnv(dashboardConfigs[0].env)
-    }
-  }, [dashboardConfigs]);
+  // useEffect(() => {
+  //   if (dashboardConfigs && dashboardConfigs.length > 0) {
+  //     setSelectedEnv(dashboardConfigs[0].env)
+  //   }
+  // }, [dashboardConfigs]);
 
-  useEffect(() => {
-    mutateDeployments()
-  }, [selectedEnv]);
+  // useEffect(() => {
+  //   mutateDeployments()
+  // }, [selectedEnv]);
 
   const wrapperRef = useRef(null);
   useOutsideClick(wrapperRef, () => setDropdownMenuOpen(false));
@@ -66,11 +70,21 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({deploymentUnitId
     setDropdownMenuOpen(false)
   }
 
+  const handleSelectEnv = useCallback((env: string) => {
+    setSelectedEnv(env)
+  }, [])
+
   useEffect(() => {
     if (deploymentUnitVersions?.page.length > 0) {
       setLastDeploymentUnitVersion(deploymentUnitVersions.page[0])
     }
   }, [deploymentUnitVersions])
+
+  if (deploymentUnit === undefined || appModule === undefined) {
+    return (
+      <></>
+    )
+  }
 
   return (
     <PlatformLayout>
@@ -81,13 +95,15 @@ const DeploymentUnitPage: NextPage<DeploymentUnitPageProps> = ({deploymentUnitId
         setSelectedVersion={setSelectedVersion}
         dashboardConfigs={dashboardConfigs}
         lastDeploymentUnitVersion={lastDeploymentUnitVersion}
-        setSelectedEnv={setSelectedEnv}
+        setSelectedEnv={handleSelectEnv}
         editing={editing}
         setEditing={setEditing}
         draggedStatType={draggedStatType}
         handleLayoutChange={handleLayoutChange}
         deployments={deployments}
         handleDraggableDragStart={handleDraggableDragStart}
+        selectedEnv={selectedEnv}
+        appModule={appModule}
       />
     </PlatformLayout>
   );

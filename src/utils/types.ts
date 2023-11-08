@@ -1,6 +1,6 @@
 export interface DashboardGridCellConfig {
   id: string,
-  statType: string,
+  statType: StatType,
   x: number,
   y: number,
   w: number,

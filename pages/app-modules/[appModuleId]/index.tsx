@@ -5,6 +5,7 @@ import AppModuleDetailView from "@/components/organisms/app-modules/appModuleDet
 import useSWR from "swr";
 import {fetcher, flyIoFetcher} from "@/utils/lib/fetcher";
 import {useCallback, useEffect, useState} from "react";
+import axiosInstance from "@/utils/lib/axiosInstance";
 
 const Index = () => {
   const router = useRouter()
@@ -13,7 +14,7 @@ const Index = () => {
   const [dataTableSize, setDataTableSize] = useState(10)
   const [dataTablePage, setDataTablePage] = useState(0)
 
-  const { data: dashboardConfig } = useSWR(() => router.query.appModuleId ? `/api/dashboard-configs?typeId=${router.query.appModuleId}&dashboardType=APP_MODULE` : null, fetcher);
+  const { data: dashboardConfig, mutate:configMutate } = useSWR(() => router.query.appModuleId ? `/api/dashboard-configs?typeId=${router.query.appModuleId}&dashboardType=APP_MODULE` : null, fetcher);
 
   const {
     data: deploymentUnits,
@@ -34,6 +35,14 @@ const Index = () => {
     setDataTableSize(size)
   }, [])
 
+  const postData = {
+    environment: 'PROD',
+    version: '1',
+    deploymentUnitName: 'argocd',
+    changeTicketId: 'CHG-475912',
+    deployer: 'Milan',
+    platform: 'OPEN_SHIFT',
+  };
 
   useEffect(() => {
     mutate()
@@ -42,6 +51,7 @@ const Index = () => {
   return (
     <PlatformLayout>
       <AppModuleDetailView
+        configMutate={configMutate}
         qualityGates={qualityGates}
         deploymentUnits={deploymentUnits}
         appModule={appModule}

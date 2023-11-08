@@ -9,21 +9,40 @@ import classNames from "classnames";
 import {GitBranch, GitBranchIcon, GitCommit} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import axiosInstance from "@/utils/lib/axiosInstance";
+import {toast} from "@/components/ui/use-toast";
+import {KeyedMutator} from "swr";
+import {Button} from "@/components/ui/button";
 
 interface DeploymentCardProps {
   deployment: DeploymentDecorate,
-  index: number
+  index: number,
+  configMutate: KeyedMutator<any>
 }
 
 const DeploymentCard: React.FC<DeploymentCardProps> = ({
                                                          deployment,
-                                                         index
+                                                         index,
+                                                         configMutate
                                                        }) => {
   const theme = useTheme()
   const currentTheme = theme.theme;
 
+  const handleFinishDeploy = (deploymentId: string) => {
+    axiosInstance
+      .post(`/deployments/${deploymentId}/finish`,{status:"SUCCESS"})
+      .then((response) => {
+        configMutate().then(r=>{
+          console.log(r)
+        })
+      })
+      .catch((error) => {
+        console.log(error)
+      });
+  }
+
   return (
-    <Draggable draggableId={deployment.id} index={index}>
+    <Draggable draggableId={deployment.deployment.id} index={index}>
       {(provided, snapshot, rubric) => (
         <Card
           {...provided.draggableProps}
@@ -42,7 +61,7 @@ const DeploymentCard: React.FC<DeploymentCardProps> = ({
             </CardTitle>
             <CardDescription>
               <div
-                className={classNames("font-bold", {"text-red-600": deployment.deployment.status === "FAILED"}, {"text-green-600": deployment.deployment.status === "SUCCESS"})}
+                className={classNames("font-bold", {"text-red-600": deployment.deployment.status === "FAILED"}, {"text-green-600": deployment.deployment.status === "SUCCESS"}, {"text-blue-600": deployment.deployment.status === "STARTED"},)}
               >{deployment.deployment.status}</div>
             </CardDescription>
           </CardHeader>
@@ -61,7 +80,7 @@ const DeploymentCard: React.FC<DeploymentCardProps> = ({
               <div>{deployment.deployment.finishedAt}</div>
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className={"justify-between w-full"}>
             <div className={"flex items-center"}>
               <Avatar className="mr-2 h-8 w-8">
                 <AvatarImage
@@ -72,6 +91,11 @@ const DeploymentCard: React.FC<DeploymentCardProps> = ({
               </Avatar>
               <div className={"text-xl font-bold"}>{deployment.deployment.deployer}</div>
             </div>
+            {/*{deployment.deployment.status === "STARTED" &&*/}
+            {/*    <Button onClick={() => handleFinishDeploy(deployment.deployment.id)}>*/}
+            {/*        Finish*/}
+            {/*    </Button>*/}
+            {/*}*/}
           </CardFooter>
         </Card>
       )}

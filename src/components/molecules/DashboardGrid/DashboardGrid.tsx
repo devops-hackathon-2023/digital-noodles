@@ -1,6 +1,5 @@
 import React from 'react';
-import {SizeMe} from "react-sizeme";
-import GridLayout, {Layout} from "react-grid-layout";
+import {Layout, Layouts, Responsive, WidthProvider} from "react-grid-layout";
 import {DashboardGridCellConfig, StatType} from "@/utils/types";
 import {v4 as uuidv4} from 'uuid';
 import classNames from "classnames"
@@ -57,38 +56,42 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({
                                                        draggedStatType,
                                                        editing
                                                      }) => {
-  const onDrop = (_, layoutItem, _event) => {
+
+  const ResponsiveGridLayout = WidthProvider(Responsive);
+
+
+  const onDrop = (_: Layout[], item: Layout, e: Event) => {
     const modifiedObject = {
-      ...layoutItem,
+      ...item,
       i: uuidv4()
     };
-    console.log(_event);
-    console.log(draggedStatType)
     onLayoutChange(dashboardConfigId, [
       ...layout,
       {
         statType: draggedStatType,
-        x: layoutItem.x,
-        y: layoutItem.y,
-        ...{
-          //@ts-ignore
-          w: MinWMinHDict[draggedStatType].minW,
-          //@ts-ignore
-          h: MinWMinHDict[draggedStatType].minH
-        }
+        x: item.x,
+        y: item.y,
+        w: item.w,
+        h: item.h
+        // ...{
+        //   //@ts-ignore
+        //   w: MinWMinHDict[draggedStatType].minW,
+        //   //@ts-ignore
+        //   h: MinWMinHDict[draggedStatType].minH
+        // }
       }
     ]);
   };
 
-  const handleLayoutChange = (gridLayout: Layout[]) => {
+  const handleLayoutChange = (gridLayout: Layout[], layouts: Layouts) => {
     const newLayout: any[] = []
-    gridLayout.forEach((gridLayoutCell) => {
-      console.log(gridLayout)
+    layouts["lg"].forEach((gridLayoutCell) => {
       if (gridLayoutCell.i !== '__dropping-elem__') {
         const item = layout.find((layoutCell) => layoutCell.id === gridLayoutCell.i)
+
         newLayout.push({
           id: item?.id,
-          statType: item?.statType,
+          statType: item ? item.statType : null,
           x: gridLayoutCell.x,
           y: gridLayoutCell.y,
           w: gridLayoutCell.w,
@@ -105,63 +108,69 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({
   }
 
   const prepareDatGridCell = (dashboardCell: DashboardGridCellConfig) => {
-    const cell = {
+    return {
       i: dashboardCell.id,
       x: dashboardCell.x,
       y: dashboardCell.y,
       w: dashboardCell.w,
       h: dashboardCell.h,
       static: !editing,
-      // @ts-ignore
-      ...MinWMinHDict[dashboardCell.statType]
+      statType: dashboardCell.statType,
     }
-    console.log(cell)
-    return cell
   }
+
 
   return (
     <>
-      <SizeMe>
-        {({size}) => <GridLayout
-          className="layout"
-          layout={layout.map(prepareDatGridCell)}
-          cols={12}
-          containerPadding={[0, 0]}
-          margin={[8, 8]}
-          rowHeight={size.width ? (size.width - 11 * 8) / 12 : 30}
-          width={size.width ? size.width : 1200}
-          onDrop={onDrop}
-          onLayoutChange={handleLayoutChange}
-          isDroppable={true}
-        >
-          {
-            layout.map((datagridCellConfig, index: number) => <div
-              key={index}
-              className={classNames({
-                '-top-2 drop-shadow': editing,
-                'top-0': !editing
-              })}>
-              <div className={classNames("w-full h-full origin-center transition-all", {
-                'animate-shake border-solid border-2 border-sky-500 rounded-lg': editing,
-              })}>
-                {
-                  editing && <div onClick={(e) => {
-                    e.preventDefault()
-                    onDelete(datagridCellConfig.id)
-                  }} className={classNames('absolute', 'top-3', 'right-3', 'z-999')}>
-                        <Button className={"rounded-full"}>
-                            <Trash2/>
-                        </Button>
-                    </div>
-                }
-                <Cell id={datagridCellConfig.id} w={datagridCellConfig.w} h={datagridCellConfig.h}
-                      statType={datagridCellConfig.statType}/>
-              </div>
-            </div>)
-          }
-        </GridLayout>
+      <ResponsiveGridLayout
+        // className="layout border-rose-500 border-2"
+        layouts={{
+          lg: layout.map(prepareDatGridCell)
+        }}
+        breakpoints={{
+          lg: 1200,
+          md: 996,
+          xxs: 0
+        }}
+        cols={{
+          lg: 3,
+          md: 2,
+          xxs: 1
+        }}
+        rowHeight={300}
+        width={1000}
+        containerPadding={[0, 20]}
+        margin={[8, 8]}
+        onDrop={onDrop}
+        onLayoutChange={handleLayoutChange}
+        isDroppable={true}
+      >
+        {
+          layout.map((datagridCellConfig) => <div
+            key={datagridCellConfig.id}
+            className={classNames({
+              '-top-2 drop-shadow': editing,
+              'top-0': !editing
+            })}>
+            <div className={classNames("w-full h-full origin-center transition-all", {
+              'animate-shake border-solid border-2 border-sky-500 rounded-lg': editing,
+            })}>
+              {
+                editing && <div onClick={(e) => {
+                  e.preventDefault()
+                  onDelete(datagridCellConfig.id)
+                }} className={classNames('absolute', 'top-3', 'right-3', 'z-999')}>
+                      <Button className={"rounded-full"}>
+                          <Trash2/>
+                      </Button>
+                  </div>
+              }
+              <Cell id={datagridCellConfig.id} w={datagridCellConfig.w} h={datagridCellConfig.h}
+                    statType={datagridCellConfig.statType}/>
+            </div>
+          </div>)
         }
-      </SizeMe>
+      </ResponsiveGridLayout>
     </>
   );
 };

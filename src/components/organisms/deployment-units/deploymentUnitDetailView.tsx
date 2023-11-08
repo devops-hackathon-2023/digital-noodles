@@ -7,6 +7,7 @@ import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/atoms/tabs"
 import DeploymentsDataTable from "@/components/organisms/deployment-units/deploymentsDataTable/deploymentsDataTable";
 import {columns} from "@/components/organisms/deployment-units/deploymentsDataTable/columns";
 import {
+  AppModuleResponse,
   DeploymentUnitResponse,
   DeploymentUnitVersionResponse,
   PageResponseDeploymentResponse,
@@ -18,9 +19,14 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import Log from "@/components/organisms/deployment-units/tabs/log";
 import Config from "@/components/organisms/deployment-units/tabs/config";
 import {Label} from "@/components/atoms/label";
+import Deployments from "@/components/organisms/deployment-units/tabs/deployments";
+import Link from "next/link";
+import {CopyToClipboard} from "react-copy-to-clipboard";
+import {toast} from "@/components/ui/use-toast";
 
 
 interface DeploymentUnitDetailViewProps {
+  appModule: AppModuleResponse,
   deploymentUnit: DeploymentUnitResponse,
   selectedVersion?: DeploymentUnitVersionResponse,
   deploymentUnitVersions: PageResponseDeploymentUnitVersionResponse,
@@ -34,6 +40,7 @@ interface DeploymentUnitDetailViewProps {
   handleLayoutChange: (dashboardConfigId: string, layout: any[]) => void,
   deployments: PageResponseDeploymentResponse,
   handleDraggableDragStart: (statType: StatType) => void
+  selectedEnv: string
 }
 
 const VersionInfo: React.FC<{
@@ -65,10 +72,14 @@ const DeploymentUnitDetailView: React.FC<DeploymentUnitDetailViewProps> = ({
                                                                              draggedStatType,
                                                                              handleLayoutChange,
                                                                              deployments,
-                                                                             handleDraggableDragStart
+                                                                             handleDraggableDragStart,
+                                                                             selectedEnv,
+                                                                             appModule
                                                                            }) => {
 
-  console.log(deployments)
+  if (dashboardConfigs === undefined) {
+    return <>Loading</>
+  }
 
   return (
     <div className="relative flex flex-col gap-5 no-scrollbar">
@@ -76,7 +87,22 @@ const DeploymentUnitDetailView: React.FC<DeploymentUnitDetailViewProps> = ({
         <div className={"flex items-center gap-6 flex-wrap"}>
           <div className={"flex items-center gap-4"}>
             <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:leading-[1.1]">
-              {deploymentUnit?.name}
+              <span className={"font-medium tracking-normal text-2xl"}>
+                <Link href={`/app-modules/${appModule.id}`}>
+                  {appModule.name}
+                </Link>
+              </span>
+              <span className={"m-2 font-medium tracking-normal "}>/</span>
+
+
+              <CopyToClipboard text={deploymentUnit?.id} onCopy={() => {
+                toast({
+                  title: "Copied to clipboard!",
+                  description: deploymentUnit?.id,
+                })
+              }}><span className={"cursor-copy"}>{deploymentUnit?.name}</span>
+
+              </CopyToClipboard>
             </h1>
             <Boxes className={"w-8 h-8"}/>
           </div>
@@ -111,16 +137,16 @@ const DeploymentUnitDetailView: React.FC<DeploymentUnitDetailViewProps> = ({
       <div className={"flex gap-2"}>
         <div>
           <Label>Environment</Label>
-          <Select defaultValue={"test"}>
+          <Select defaultValue={"DEV"} onValueChange={setSelectedEnv}>
             <SelectTrigger className="w-[180px] mt-1">
               <SelectValue placeholder="Environment"/>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="test">TEST</SelectItem>
-              <SelectItem value="dev">DEV</SelectItem>
-              <SelectItem value="prs">PRS</SelectItem>
-              <SelectItem value="prev">PRED</SelectItem>
-              <SelectItem value="prod">PROD</SelectItem>
+              <SelectItem value="DEV">DEV</SelectItem>
+              <SelectItem value="INT">INT</SelectItem>
+              <SelectItem value="PRS">PRS</SelectItem>
+              <SelectItem value="PRED">PRED</SelectItem>
+              <SelectItem value="PROD">PROD</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -153,6 +179,7 @@ const DeploymentUnitDetailView: React.FC<DeploymentUnitDetailViewProps> = ({
         </TabsList>
         <TabsContent value="dashboard">
           <Dashboard
+            selectedEnv={selectedEnv}
             deploymentUnit={deploymentUnit}
             selectedVersion={selectedVersion}
             deploymentUnitVersions={deploymentUnitVersions}
@@ -169,8 +196,7 @@ const DeploymentUnitDetailView: React.FC<DeploymentUnitDetailViewProps> = ({
           />
         </TabsContent>
         <TabsContent value="log"><Log/></TabsContent>
-        <TabsContent value="deployments"><DeploymentsDataTable data={deployments ? deployments.page : []}
-                                                               columns={columns}/></TabsContent>
+        <TabsContent value="deployments"><Deployments deployments={deployments}/></TabsContent>
         <TabsContent value="config"><Config/></TabsContent>
       </Tabs>
     </div>

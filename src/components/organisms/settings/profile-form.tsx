@@ -85,7 +85,7 @@ export function ProfileForm() {
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder={session.data?.user?.name} {...field} />
+                <Input placeholder={session.data?.user?.name!} {...field} />
               </FormControl>
               <FormDescription>
                 This is your public display name. It can be your real name or a
@@ -102,7 +102,7 @@ export function ProfileForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder={session.data?.user?.email} {...field} />
+                <Input placeholder={session.data?.user?.email!} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

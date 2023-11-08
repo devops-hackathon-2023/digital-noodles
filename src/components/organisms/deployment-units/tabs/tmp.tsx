@@ -8,19 +8,19 @@ import {
 } from "@/utils/types";
 import {Blocks, Check, Cpu, HeartPulse, MemoryStick, Pencil, Plus} from "lucide-react";
 import {Button} from "@/components/atoms/button";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/atoms/tabs";
 import {Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger} from "@/components/atoms/sheet";
+import DashboardGrid from "@/components/molecules/DashboardGrid/DashboardGrid";
 import {isMobile} from "react-device-detect";
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/atoms/accordion";
-import DashboardGrid from "@/components/molecules/DashboardGrid/DashboardGrid";
 import DraggableStat from "@/components/molecules/DraggableStat/DraggableStat";
-
 
 interface DashboardProps {
   deploymentUnit: DeploymentUnitResponse,
   selectedVersion?: DeploymentUnitVersionResponse,
   deploymentUnitVersions: PageResponseDeploymentUnitVersionResponse,
   setSelectedVersion: (version: DeploymentUnitVersionResponse) => void,
-  dashboardConfigs: any[],
+  dashboardConfigs: any,
   lastDeploymentUnitVersion: DeploymentUnitVersionResponse | undefined,
   setSelectedEnv: (env: string) => void,
   editing: boolean,
@@ -29,57 +29,76 @@ interface DashboardProps {
   handleLayoutChange: (dashboardConfigId: string, layout: any[]) => void,
   deployments: PageResponseDeploymentResponse,
   handleDraggableDragStart: (statType: StatType) => void
-  selectedEnv: string
 }
 
 
 const Dashboard: React.FC<DashboardProps> = ({
+                                               deploymentUnit,
+                                               selectedVersion,
+                                               deploymentUnitVersions,
+                                               setSelectedVersion,
                                                dashboardConfigs,
                                                lastDeploymentUnitVersion,
                                                setSelectedEnv,
                                                editing,
-                                               selectedEnv,
                                                setEditing,
                                                draggedStatType,
                                                handleLayoutChange,
-                                               selectedVersion,
                                                deployments,
                                                handleDraggableDragStart
                                              }) => {
-
-
-  const selectedEnvIndex = dashboardConfigs.findIndex((l) => l.env === selectedEnv)
-  const layout = dashboardConfigs[selectedEnvIndex]
-
   return (
     <Sheet modal={false}>
-      <div className="relative flex flex-col w-full">
-        {!editing && <div className={"flex gap-2 flex-wrap justify-end"}><Button variant={'secondary'}
-                                                                                 onClick={() => setEditing(true)}>
-            <Pencil className={"w-4 h-4 mr-2"}/> Edit
-        </Button>
-        </div>
-        }
-        {editing && <div className={"flex gap-2 flex-wrap justify-end"}>
-            <Button variant={'secondary'} onClick={() => setEditing(false)}>
-                <Check className={"w-4 h-4 mr-2"}/> Done
-            </Button>
-            <SheetTrigger asChild>
-                <Button variant="outline">
-                    <Plus className={"w-4 h-4 mr-2"}/>
-                    Add
-                </Button>
-            </SheetTrigger>
-        </div>
-        }
-        {lastDeploymentUnitVersion?.id === selectedVersion?.id ?
-          <DashboardGrid editing={editing} dashboardConfigId={layout.id}
-                         draggedStatType={draggedStatType} layout={layout.dashboardCells}
-                         onLayoutChange={handleLayoutChange} onCellDelete={() => {
-          }}/> :
-          <h2 className={"text-2xl text-center"}>Go to most recent deployment version to display stats</h2>
-        }
+      <div className="relative flex flex-col gap-5 w-full">
 
+        <div>
+          {
+            dashboardConfigs && <>{
+              lastDeploymentUnitVersion?.id === selectedVersion?.id ?
+                <Tabs defaultValue={dashboardConfigs.length > 0 && dashboardConfigs[0].env} className="w-full">
+                  <div className={'flex justify-between w-full'}>
+                    <TabsList>
+                      {
+                        dashboardConfigs.map((layout: any, index: number) =>
+                          <TabsTrigger value={layout.env}
+                                       key={index}
+                                       onClick={() => setSelectedEnv(layout.env)}>{layout.env}</TabsTrigger>
+                        )
+                      }
+                    </TabsList>
+
+                    {!editing && <Button variant={'secondary'} onClick={() => setEditing(true)}>
+                        <Pencil className={"w-4 h-4 mr-2"}/> Edit
+                    </Button>}
+                    {editing && <div className={"flex gap-2 flex-wrap justify-end"}>
+                        <Button variant={'secondary'} onClick={() => setEditing(false)}>
+                            <Check className={"w-4 h-4 mr-2"}/> Done
+                        </Button>
+                        <SheetTrigger asChild>
+                            <Button variant="outline">
+                                <Plus className={"w-4 h-4 mr-2"}/>
+                                Add
+                            </Button>
+                        </SheetTrigger>
+                    </div>
+                    }
+                  </div>
+                  {
+                    dashboardConfigs.map((layout: any, index: number) =>
+                      <TabsContent value={layout.env} key={index}>
+                        <DashboardGrid editing={editing} dashboardConfigId={layout.id}
+                                       key={index}
+                                       draggedStatType={draggedStatType} layout={layout.dashboardCells}
+                                       onLayoutChange={handleLayoutChange} onCellDelete={() => {
+                        }}/>
+                      </TabsContent>
+                    )
+                  }
+                </Tabs> :
+                <h2 className={"text-2xl text-center"}>Go to most recent deployment version to display stats</h2>
+            }</>
+          }
+        </div>
         <SheetContent side={isMobile ? 'bottom' : 'right'}>
           <SheetHeader>
             <SheetTitle>Add new widget</SheetTitle>

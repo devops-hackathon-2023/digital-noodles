@@ -29,14 +29,14 @@ const SettingsLayout: React.FC<SettingsLayoutProps> = ({children}) => {
     required: true,
     onUnauthenticated() {
       setTimeout(() => router.push("/login")
-        , 1000)
+        , 1300)
     },
   })
 
 
   if (status === "loading") {
     if (pathname === "/") {
-      return <div className="container flex min-h-screen justify-center items-center">
+      return <div className="container flex min-h-screen justify-center items-center bg-[#18181b]">
         <LoadingView/>
       </div>
     }

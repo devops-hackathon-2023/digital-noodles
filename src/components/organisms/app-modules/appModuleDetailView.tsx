@@ -15,8 +15,10 @@ import QualityGateResultChart from "@/components/organisms/app-modules/qualityGa
 import QualityGatePercentChart from "@/components/organisms/app-modules/qualityGateCharts/qualityGatePercentChart";
 import {Skeleton} from "@/components/atoms/skeleton";
 import KanbanEnvironmentBoard from "@/components/organisms/kanbanEnvironmentBoard/kanbanEnvironmentBoard";
+import {KeyedMutator} from "swr";
 
 interface AppModuleDashboardViewProps {
+  configMutate: KeyedMutator<any>,
   deploymentUnits?: PageResponseDeploymentUnitResponse,
   appModule?: AppModuleResponse,
   dataTablePageSize: number,
@@ -29,14 +31,15 @@ interface AppModuleDashboardViewProps {
 }
 
 const AppModuleDetailView: NextPage<AppModuleDashboardViewProps> = ({
-                                                                         deploymentUnits,
-                                                                         appModule,
-                                                                         dataTablePageSize,
-                                                                         handleTableSize,
-                                                                         handleTablePage,
-                                                                         qualityGates,
-                                                                         dashboardConfig
-                                                                       }) => {
+                                                                      deploymentUnits,
+                                                                      appModule,
+                                                                      dataTablePageSize,
+                                                                      handleTableSize,
+                                                                      handleTablePage,
+                                                                      qualityGates,
+                                                                      configMutate,
+                                                                      dashboardConfig
+                                                                    }) => {
 
   return (
     <div className="relative flex flex-col gap-6">
@@ -52,7 +55,7 @@ const AppModuleDetailView: NextPage<AppModuleDashboardViewProps> = ({
           <Skeleton className={"w-full h-40"}/>
           <Skeleton className={"w-full h-40"}/>
           <Skeleton className={"w-full h-40"}/>
-        </div> : <KanbanEnvironmentBoard dashboardConfig={dashboardConfig}/>}
+        </div> : <KanbanEnvironmentBoard dashboardConfig={dashboardConfig} configMutate={configMutate}/>}
       <div className={"flex flex-col gap-3"}>
         <div className={"grid gap-4 md:grid-cols-1 lg:grid-cols-3"}>
           {qualityGates === undefined ?

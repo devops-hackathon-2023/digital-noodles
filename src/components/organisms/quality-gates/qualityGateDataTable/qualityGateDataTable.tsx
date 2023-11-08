@@ -56,6 +56,7 @@ export function QualityGateDataTable<TData, TValue>({
         pageIndex: pageNumber
       }
     },
+    manualPagination:true,
     pageCount: pageCount,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,

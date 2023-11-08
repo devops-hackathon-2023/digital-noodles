@@ -99,7 +99,7 @@ class DashboardConfigService {
 
                 deploymentUnits.page.forEach((deploymentUnit) => {
                     envs.forEach((env) => {
-                        deploymentPromises.push(this.DOPOClient.getDeployments({ env, deploymentUnitId: deploymentUnit.id, sort: 'finishedAt', order: 'desc' })
+                        deploymentPromises.push(this.DOPOClient.getDeployments({ env, deploymentUnitId: deploymentUnit.id, sort: 'startedAt', order: 'desc' })
                             .then((response) => {
                                 if(response.page.length > 0)
                                     return response.page[0]

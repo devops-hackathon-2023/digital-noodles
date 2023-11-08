@@ -1,23 +1,35 @@
-import React, {useCallback, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import Column from "@/components/organisms/kanbanEnvironmentBoard/Column";
 import {DragDropContext, DropResult} from "react-beautiful-dnd";
 import {DeploymentDecorate} from "@/utils/types";
 import {useToast} from "@/components/ui/use-toast";
+import axiosInstance from "@/utils/lib/axiosInstance";
+import {useSession} from "next-auth/react";
+import {KeyedMutator} from "swr";
 
 interface KanbanEnvironmentBoardProps {
+  configMutate: KeyedMutator<any>
   dashboardConfig: {
     [key: string]: DeploymentDecorate[]
   }
 }
 
 const KanbanEnvironmentBoard: React.FC<KanbanEnvironmentBoardProps> = ({
-                                                                         dashboardConfig
+                                                                         dashboardConfig,
+                                                                         configMutate
                                                                        }) => {
   const [data, setData] = useState<{
     [key: string]: DeploymentDecorate[]
   }>(dashboardConfig)
 
   const {toast} = useToast()
+  const session = useSession()
+
+  useEffect(() => {
+    setData(dashboardConfig)
+    console.log("ahoj")
+  }, [dashboardConfig])
+
 
   const handleOnDragEnd = useCallback((result: DropResult) => {
     const {
@@ -34,32 +46,64 @@ const KanbanEnvironmentBoard: React.FC<KanbanEnvironmentBoardProps> = ({
       destination.droppableId === source.droppableId
     ) return;
 
-    setData(prevData => {
-      const clonedData = JSON.parse(JSON.stringify(prevData));
 
-      const sourceColumn = clonedData[source.droppableId];
-      const destinationColumn = clonedData[destination.droppableId];
+    const clonedData = JSON.parse(JSON.stringify(data));
 
-      const draggingItemIndex = sourceColumn.findIndex((v: DeploymentDecorate) => v.id === draggableId);
-      const draggingItem = sourceColumn[draggingItemIndex];
-      const itemToRemoveIndex = destinationColumn.findIndex((v: DeploymentDecorate) => v.deploymentUnit.id === draggingItem.deploymentUnit.id);
+    const sourceColumn = clonedData[source.droppableId];
 
-      const temp = JSON.parse(JSON.stringify(draggingItem))
-      temp.id += destination.droppableId
+    const draggingItemIndex = sourceColumn.findIndex((v: DeploymentDecorate) => v.deployment.id === draggableId);
+    const draggingItem = sourceColumn[draggingItemIndex];
 
-      destinationColumn.push(temp);
-      destinationColumn.splice(itemToRemoveIndex, 1);
 
-      toast({
-        title: `Successfully deployed ${draggingItem.deploymentUnit.name} v${draggingItem.deploymentUnitVersion.version} to ${destination.droppableId}!`,
-        variant: "success"
+
+
+    // "environment": "PROD",
+    //   "version": "1",
+    //   "deploymentUnitName": "argocd",
+    //   "changeTicketId": "CHG-475912",
+    //   "deployer": "Milan",
+    //   "platform": "OPEN_SHIFT"
+    console.log("---------------------")
+    console.log(data)
+    console.log(sourceColumn)
+    console.log(draggableId)
+    console.log(draggingItemIndex)
+    console.log(draggingItem)
+    console.log("---------------------")
+
+
+    axiosInstance
+      .post('/deployments/start', {
+        "environment": destination.droppableId,
+        "version": "1",
+        "deploymentUnitName": draggingItem.deploymentUnit.name,
+        "changeTicketId": draggingItem.deployment.changeTicketId,
+        "deployer": session.data?.user?.name,
+        "platform": draggingItem.deployment.platform
+      }, {})
+      .then((response) => {
+        configMutate().then(() => {
+          toast({
+            title: `Successfully deployed ${draggingItem.deploymentUnit.name} v${draggingItem.deploymentUnitVersion.version} to ${destination.droppableId}!`,
+            variant: "success"
+          })
+        })
+        console.log(response)
       })
+      .catch((error) => {
+        toast({
+          title: "Error :(",
+          description: error,
+          variant: "destructive"
+        })
+      });
 
-      return {
-        ...clonedData,
-        [destination.droppableId]: destinationColumn,
-      };
-    });
+
+    // return {
+    //   ...clonedData,
+    //   [destination.droppableId]: destinationColumn,
+    // };
+    // });
   }, [])
 
   return (
@@ -69,7 +113,7 @@ const KanbanEnvironmentBoard: React.FC<KanbanEnvironmentBoardProps> = ({
       <div className={"md:flex-row flex-col flex gap-4 overflow-auto w-full pb-2 no-scrollbar"}>
         {Object.keys(data).map((key: string, index: number) => {
           return (
-            <Column data={data[key]} title={key} key={index}/>
+            <Column data={data[key]} title={key} key={index} configMutate={configMutate}/>
           )
         })}
       </div>

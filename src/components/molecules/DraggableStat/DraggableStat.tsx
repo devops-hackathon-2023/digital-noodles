@@ -1,11 +1,10 @@
 import React from 'react';
 import {StatType} from "@/utils/types";
-import {Hand} from "lucide-react";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/atoms/card";
-import Link from "next/link";
-import {Button} from "@/components/atoms/button";
-import {Progress} from "@/components/atoms/progress";
 import chartImg from "@/assets/images/chart.png"
+import healthCheck from "@/assets/images/healthCheckWidget.png"
+import buildTime from "@/assets/images/buildTimeWidget.png"
+import gateWidget from "@/assets/images/gateWidget.png"
 import Image from "next/image";
 
 interface DraggableStatProps {
@@ -34,7 +33,16 @@ const DraggableStat: React.FC<DraggableStatProps> = ({
           </CardTitle>
         </CardHeader>
         <CardContent className="flex gap-5">
-          <Image src={chartImg} alt={"chart"} style={{maxWidth: "300px"}} className={"hidden md:block"}/>
+          {statType === StatType.HEALTHCHECK &&
+              <Image src={healthCheck} alt={"widget"} style={{maxWidth: "300px"}} className={"hidden md:block"}/>}
+          {statType === StatType.SYSTEM_RAM_USAGE &&
+              <Image src={chartImg} alt={"widget"} style={{maxWidth: "300px"}} className={"hidden md:block"}/>}
+          {statType === StatType.SYSTEM_CPU_USAGE &&
+              <Image src={chartImg} alt={"widget"} style={{maxWidth: "300px"}} className={"hidden md:block"}/>}
+          {statType === StatType.STATS_AVG_BUILD_TIME &&
+              <Image src={buildTime} alt={"widget"} style={{maxWidth: "300px"}} className={"hidden md:block"}/>}
+          {statType === StatType.STATS_GATES_FAILED_PASSED &&
+              <Image src={gateWidget} alt={"widget"} style={{maxWidth: "300px"}} className={"hidden md:block"}/>}
         </CardContent>
       </Card>
     </>
