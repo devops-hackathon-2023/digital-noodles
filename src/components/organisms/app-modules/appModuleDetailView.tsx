@@ -10,9 +10,9 @@ import {columns} from "@/components/organisms/deployment-units/deploymentUnitsDa
 import {
   DeploymentUnitsDataTable
 } from "@/components/organisms/deployment-units/deploymentUnitsDataTable/deploymentUnitsDataTable";
-import QualityGateRatingChart from "@/components/organisms/app-modules/qualityGateCharts/qualityGateRatingChart";
-import QualityGateResultChart from "@/components/organisms/app-modules/qualityGateCharts/qualityGateResultChart";
-import QualityGatePercentChart from "@/components/organisms/app-modules/qualityGateCharts/qualityGatePercentChart";
+import QualityGateRatingChart from "@/components/molecules/qualityGateCharts/qualityGateRatingChart";
+import QualityGateResultChart from "@/components/molecules/qualityGateCharts/qualityGateResultChart";
+import QualityGatePercentChart from "@/components/molecules/qualityGateCharts/qualityGatePercentChart";
 import {Skeleton} from "@/components/atoms/skeleton";
 import KanbanEnvironmentBoard from "@/components/organisms/kanbanEnvironmentBoard/kanbanEnvironmentBoard";
 import {KeyedMutator} from "swr";

@@ -4,7 +4,15 @@ import {Progress} from "@/components/atoms/progress";
 import Link from "next/link";
 import {Button} from "@/components/atoms/button";
 import {useSession} from "next-auth/react";
-import {Octokit} from "octokit";
+import QualityGateRatingChart from "@/components/molecules/qualityGateCharts/qualityGateRatingChart";
+import QualityGateResultChart from "@/components/molecules/qualityGateCharts/qualityGateResultChart";
+import QualityGatePercentChart from "@/components/molecules/qualityGateCharts/qualityGatePercentChart";
+import useSWR from "swr";
+import {flyIoFetcher} from "@/utils/lib/fetcher";
+import {useSas} from "@/utils/SasContext";
+import {Skeleton} from "@/components/atoms/skeleton";
+import QualityGateAveragePercentChart from "@/components/molecules/qualityGateCharts/qualityGateAveragePercentChart";
+import {DeploymentUnitResponse, PageResponseDeploymentUnitResponse} from "@/utils/types";
 
 const deployments = [
   {
@@ -42,31 +50,42 @@ const cards = [
   }
 ];
 
-const SasesList = () => {
+const SasesList = ({
+                     pageDeploymentUnits,
+                     id
+                   }: {
+  pageDeploymentUnits: PageResponseDeploymentUnitResponse,
+  id: string
+}) => {
+
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-2 pb-7">
         <CardTitle className="flex justify-between items-center w-full">
-          <div className="text-2xl font-bold">Sases</div>
-          <Link href={"/sass"}>
+          <div className="text-2xl font-bold">Deployments units</div>
+          <Link href={"/deployment-units"}>
             <Button variant={"link"}>
               Show all
             </Button>
           </Link>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-col flex gap-5">
-        {[...Array(3)].map((value, index, array) => (
-          <div className="flex items-center justify-between" key={index}>
-            <div className="flex w-full items-center gap-20">
-              <div className="flex flex-col flex-shrink-0">
-                <div className="font-medium">loans</div>
-                <div className="text-sm font-light">loans-fe</div>
+      <CardContent className="grid gap-4 md:grid-cols-3 lg:grid-cols-3">
+        {pageDeploymentUnits.page.filter(p =>
+          p.sasId === id
+        ).map((d: DeploymentUnitResponse, index: number) => {
+          return (
+            <div className="flex items-center justify-between" key={index}>
+              <div className="flex w-full items-center gap-20">
+                <Link className="flex flex-col flex-shrink-0" href={`/deployment-units/${d.id}`}>
+                  <div className="font-medium">{d.name}</div>
+                  <div className="text-sm font-light">loans-fe</div>
+                </Link>
               </div>
-              <Progress value={33} className="w-[60%]"/>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </CardContent>
     </Card>
   )
@@ -75,15 +94,13 @@ const SasesList = () => {
 
 const DashboardView = () => {
   const {data: session} = useSession()
-  console.log(session)
-  const octokit = new Octokit({
-    auth: `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`
-  });
+  const sas = useSas()
 
-  const response = octokit.request('GET /user/repos');
-  response.then((response) => {
-    console.log(response.data)
-  })
+  const {data: qualityGates} = useSWR(() => sas.selectedSas?.id ? `/quality-gates?page=0&size=20&sort=createdAt&order=desc&sasId=${sas.selectedSas?.id}` : null, flyIoFetcher)
+
+  const {
+    data: pageDeploymentUnits,
+  } = useSWR<PageResponseDeploymentUnitResponse>(`/deployment-units`, flyIoFetcher)
 
   return (
     <div className="relative flex flex-col gap-5">
@@ -96,12 +113,23 @@ const DashboardView = () => {
             Welcome back!
           </h1>
         </div>
-        <Button>
-          Edit
-        </Button>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
-        <SasesList/>
+        {qualityGates === undefined || pageDeploymentUnits === undefined || sas.selectedSas === undefined ?
+          <>
+            <Skeleton className={"w-full h-80"}/>
+            <Skeleton className={"w-full h-80"}/>
+            <Skeleton className={"w-full h-80"}/>
+            <Skeleton className={"w-full h-80"}/>
+          </>
+          :
+          <>
+            <SasesList pageDeploymentUnits={pageDeploymentUnits} id={sas.selectedSas.id!}/>
+            <QualityGateResultChart last100QualityGates={qualityGates}/>
+            <QualityGatePercentChart last100QualityGates={qualityGates}/>
+            <QualityGateAveragePercentChart last100QualityGates={qualityGates}/>
+          </>
+        }
       </div>
     </div>
   )

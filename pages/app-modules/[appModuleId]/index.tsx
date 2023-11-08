@@ -35,15 +35,6 @@ const Index = () => {
     setDataTableSize(size)
   }, [])
 
-  const postData = {
-    environment: 'PROD',
-    version: '1',
-    deploymentUnitName: 'argocd',
-    changeTicketId: 'CHG-475912',
-    deployer: 'Milan',
-    platform: 'OPEN_SHIFT',
-  };
-
   useEffect(() => {
     mutate()
   }, [dataTablePage, dataTableSize])
