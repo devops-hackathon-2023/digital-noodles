@@ -66,12 +66,18 @@ export function AppModulesDataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
+  const searchByParams = {
+    key: "name",
+    placeholder: "Search by name..."
+  };
+
   return (
     <DataTable
       table={table}
       columns={columns}
       handleTablePage={handleTablePage}
       handleTableSize={handleTableSize}
+      searchByParams={searchByParams}
     />
   )
 }

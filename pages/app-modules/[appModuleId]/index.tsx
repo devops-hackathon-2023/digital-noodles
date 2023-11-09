@@ -1,10 +1,11 @@
 import {useRouter} from "next/router";
 import {PageResponseAppModuleResponse, PageResponseDeploymentUnitResponse, SortType} from "@/utils/types";
 import PlatformLayout from "@/components/layouts/platformLayout";
-import AppModuleDashboardView from "@/components/organisms/app-modules/appModuleDashboardView";
+import AppModuleDetailView from "@/components/organisms/app-modules/appModuleDetailView";
 import useSWR from "swr";
 import {fetcher, flyIoFetcher} from "@/utils/lib/fetcher";
 import {useCallback, useEffect, useState} from "react";
+import axiosInstance from "@/utils/lib/axiosInstance";
 
 const Index = () => {
   const router = useRouter()
@@ -13,8 +14,7 @@ const Index = () => {
   const [dataTableSize, setDataTableSize] = useState(10)
   const [dataTablePage, setDataTablePage] = useState(0)
 
-  const { data: dashboardConfig } = useSWR(() => router.query.appModuleId ? `/api/dashboard-configs?typeId=${router.query.appModuleId}&dashboardType=APP_MODULE` : null, fetcher);
-  console.log(dashboardConfig);
+  const { data: dashboardConfig, mutate:configMutate } = useSWR(() => router.query.appModuleId ? `/api/dashboard-configs?typeId=${router.query.appModuleId}&dashboardType=APP_MODULE` : null, fetcher);
 
   const {
     data: deploymentUnits,
@@ -25,6 +25,8 @@ const Index = () => {
 
   const {data: appModule} = useSWR(() => appModuleId ? `app-modules/${appModuleId}` : null, flyIoFetcher)
 
+  const {data: qualityGates} = useSWR(()=>appModuleId ? `quality-gates?page=0&size=20&sort=createdAt&order=desc&appModuleId=${appModuleId}`:null, flyIoFetcher)
+
   const handleDataTablePage = useCallback((page: number) => {
     setDataTablePage(page)
   }, [])
@@ -33,19 +35,21 @@ const Index = () => {
     setDataTableSize(size)
   }, [])
 
-
   useEffect(() => {
     mutate()
   }, [dataTablePage, dataTableSize])
 
   return (
     <PlatformLayout>
-      <AppModuleDashboardView
+      <AppModuleDetailView
+        configMutate={configMutate}
+        qualityGates={qualityGates}
         deploymentUnits={deploymentUnits}
         appModule={appModule}
         dataTablePageSize={dataTableSize}
         handleTableSize={handleDataTableSize}
         handleTablePage={handleDataTablePage}
+        dashboardConfig={dashboardConfig}
       />
     </PlatformLayout>
   )

@@ -99,7 +99,7 @@ class DashboardConfigService {
 
                 deploymentUnits.page.forEach((deploymentUnit) => {
                     envs.forEach((env) => {
-                        deploymentPromises.push(this.DOPOClient.getDeployments({ env, deploymentUnitId: deploymentUnit.id, sort: 'finishedAt', order: 'desc' })
+                        deploymentPromises.push(this.DOPOClient.getDeployments({ env, deploymentUnitId: deploymentUnit.id, sort: 'startedAt', order: 'desc' })
                             .then((response) => {
                                 if(response.page.length > 0)
                                     return response.page[0]
@@ -126,7 +126,7 @@ class DashboardConfigService {
                     rv[env] = deploymentUnits.page.map((deploymentUnit) => ({
                         deploymentUnit,
                         deploymentUnitVersion: deploymentUnitVersions.find((deploymentUnitVersion) => deploymentUnitVersion.deploymentUnitId === deploymentUnit.id) ?? null,
-                        deployment: deployments.find(deployment => deployment.deploymentUnitId === deploymentUnit.id) ?? null
+                        deployment: deployments.find(deployment => deployment.deploymentUnitId === deploymentUnit.id && deployment.environment === env) ?? null
                     })).map(rvItem => ({ id: hash(rvItem), ...rvItem }))
                 })
                 return rv;

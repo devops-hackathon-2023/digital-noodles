@@ -17,6 +17,7 @@ import {Avatar, AvatarFallback, AvatarImage} from "@/components/atoms/avatar"
 import {cn} from "@/utils/lib/utils";
 import {signOut, useSession} from "next-auth/react";
 import {useRouter} from "next/router";
+import Link from "next/link";
 
 export function ProfileDropdownMenu({className}: any) {
   const router = useRouter();
@@ -37,16 +38,8 @@ export function ProfileDropdownMenu({className}: any) {
           <DropdownMenuSeparator/>
           <DropdownMenuGroup>
             <DropdownMenuItem>
-              <User className="mr-2 h-4 w-4"/>
-              <span>Profile</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
               <Settings className="mr-2 h-4 w-4"/>
-              <span>Settings</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Keyboard className="mr-2 h-4 w-4"/>
-              <span>Keyboard shortcuts</span>
+              <Link href={"/settings"}>Settings</Link>
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator/>

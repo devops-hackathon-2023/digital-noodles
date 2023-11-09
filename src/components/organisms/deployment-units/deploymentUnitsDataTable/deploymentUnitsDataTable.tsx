@@ -15,7 +15,7 @@ import {
   VisibilityState,
 } from "@tanstack/react-table"
 import DataTable from "@/components/molecules/DataTable/DataTable";
-import {languages} from "@/utils/types";
+import {deploymentUnitsLanguages} from "@/utils/types";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -71,17 +71,23 @@ export function DeploymentUnitsDataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
+  const searchByParams = {
+    key: "name",
+    placeholder: "Search by name..."
+  };
+
   return (
     <DataTable
       filters={[{
         title: "Language",
         column: "language",
-        options: languages
+        options: deploymentUnitsLanguages
       }]}
       table={table}
       columns={columns}
       handleTablePage={handleTablePage}
       handleTableSize={handleTableSize}
+      searchByParams={searchByParams}
     />
   )
 }

@@ -11,6 +11,12 @@ interface DataTableProps {
   handleTablePage: (page: number) => void,
   handleTableSize: (size: number) => void,
   filters?: Filter[]
+  searchByParams: SearchBy
+}
+
+interface SearchBy {
+  key: string,
+  placeholder: string
 }
 
 interface Filter {
@@ -27,11 +33,12 @@ const DataTable: NextPage<DataTableProps> = ({
                                                columns,
                                                handleTablePage,
                                                handleTableSize,
-                                               filters
+                                               filters,
+                                               searchByParams
                                              }) => {
   return (
     <div className="space-y-4">
-      <Toolbar table={table} filters={filters}/>
+      <Toolbar table={table} filters={filters} searchBy={searchByParams}/>
       <div className="rounded-md border">
         <Table>
           <TableHeader>

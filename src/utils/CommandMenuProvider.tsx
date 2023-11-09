@@ -1,4 +1,4 @@
-import {ReactElement, useEffect, useState} from "react";
+import React, {ReactElement, useEffect, useState} from "react";
 import {
   CommandDialog,
   CommandGroup,
@@ -10,6 +10,8 @@ import axios from "axios";
 import className from "classnames";
 import Link from "next/link";
 import {Boxes, Package} from "lucide-react";
+import {Skeleton} from "@/components/atoms/skeleton";
+import {Separator} from "@/components/atoms/separator";
 
 const CommandMenuProvider = ({children}: {
   children: ReactElement
@@ -18,15 +20,15 @@ const CommandMenuProvider = ({children}: {
   const [searchResults, setSearchResults] = useState([]);
   const handleSearch = (query: string) => {
     axios.get('/api/search', {
-      params: { query }
+      params: {query}
     })
-        .then(response => response.data)
-        .then(setSearchResults);
+      .then(response => response.data)
+      .then(setSearchResults);
   }
 
-  useEffect(() => {
-    console.log(searchResults)
-  }, [searchResults]);
+  // useEffect(() => {
+  //   console.log(searchResults)
+  // }, [searchResults]);
 
 
   useEffect(() => {
@@ -41,34 +43,33 @@ const CommandMenuProvider = ({children}: {
   }, [])
 
   const constructHref = (item: any) => {
-    if(item.type === "SAS")
+    if (item.type === "SAS")
       return `/sases/${item.data.id}`
 
-    if(item.type === "DEPLOYMENT_UNIT")
+    if (item.type === "DEPLOYMENT_UNIT")
       return `/deployment-units/${item.data.id}`
 
     return "/"
   }
 
   const getIcon = (item: any) => {
-    if(item.type === "SAS")
+    if (item.type === "SAS")
       return <Package className={"w-2 h-2"}/>
 
-    if(item.type === "DEPLOYMENT_UNIT")
+    if (item.type === "DEPLOYMENT_UNIT")
       return <Boxes className={"w-2 h-2"}/>
 
     return <div>No icon</div>
   }
 
   const getLabel = (item: any) => {
-    if(item.type === "SAS")
+    if (item.type === "SAS")
       return "SAS"
 
-    if(item.type === "DEPLOYMENT_UNIT")
+    if (item.type === "DEPLOYMENT_UNIT")
       return "Deployment Unit"
 
     return "Unknown"
-
   }
 
   return (
@@ -89,18 +90,20 @@ const CommandMenuProvider = ({children}: {
             </CommandItem>
           </CommandGroup>
         </CommandList>
+        <Separator/>
         {
-            searchResults.length > 0 && <><CommandSeparator/>
+          searchResults.length > 0 ? <><CommandSeparator/>
               <CommandList>
                 <CommandGroup>
                   {
-                    searchResults.slice(0,10).map((searchResult: any) => <Link href={constructHref(searchResult)} onClick={() => setOpen(false)}>
+                    searchResults.slice(0, 10).map((searchResult: any) => <Link href={constructHref(searchResult)}
+                                                                                onClick={() => setOpen(false)}>
                       <CommandItem className={"flex gap-2"}>
                         <div>{searchResult.label}</div>
                         <div className={"w-1 h-1 bg-foreground rounded-xl"}></div>
                         <div className={"flex gap-2"}>
-                          { getIcon(searchResult) }
-                          <div className={className("text-sm")}>{ getLabel(searchResult) }</div>
+                          {getIcon(searchResult)}
+                          <div className={className("text-sm")}>{getLabel(searchResult)}</div>
                         </div>
                       </CommandItem>
                     </Link>)
@@ -108,6 +111,8 @@ const CommandMenuProvider = ({children}: {
                 </CommandGroup>
               </CommandList>
             </>
+            :
+            <Skeleton className={"w-[80%] h-4 m-2"}/>
         }
       </CommandDialog>
     </>
