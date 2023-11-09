@@ -20,6 +20,11 @@ import {useSas} from "@/utils/SasContext";
 import axiosInstance from "@/utils/lib/axiosInstance";
 import axios from "axios";
 import {fetcher} from "@/utils/lib/fetcher";
+import {DropdownMenu, DropdownMenuItem, DropdownMenuTrigger} from "@/components/atoms/dropdown-menu";
+import {MoreHorizontal} from "lucide-react";
+import {DropdownMenuContent} from "@radix-ui/react-dropdown-menu";
+import React from "react";
+import Link from "next/link";
 
 interface AppModuleDashboardViewProps {
   configMutate: KeyedMutator<any>,
@@ -44,33 +49,50 @@ const AppModuleDetailView: NextPage<AppModuleDashboardViewProps> = ({
                                                                       configMutate,
                                                                       dashboardConfig
                                                                     }) => {
-    const { selectedSas } = useSas();
+  const {selectedSas} = useSas();
 
-    const { data: config } = useSWR(() => selectedSas ? `/api/dashboard-configs?typeId=${selectedSas.id}&dashboardType=SAS` : null, fetcher);
+  const {data: config} = useSWR(() => selectedSas ? `/api/dashboard-configs?typeId=${selectedSas.id}&dashboardType=SAS` : null, fetcher);
 
-    const pin = () => {
-        if(selectedSas && appModule) {
-            axios.post(`/api/dashboard-configs/pin?typeId=${selectedSas.id}`, { itemId: appModule?.id, itemType: "APP_MODULE" },
-                { withCredentials: true })
-        }
+  const pin = () => {
+    if (selectedSas && appModule) {
+      axios.post(`/api/dashboard-configs/pin?typeId=${selectedSas.id}`, {
+          itemId: appModule?.id,
+          itemType: "APP_MODULE"
+        },
+        {withCredentials: true})
     }
+  }
 
-    const unpin = () => {
-        if(selectedSas && appModule) {
-            axios.delete(`/api/dashboard-configs/pin?typeId=${selectedSas.id}&itemId=${appModule.id}&itemType=APP_MODULE`, { withCredentials: true })
-        }
+  const unpin = () => {
+    if (selectedSas && appModule) {
+      axios.delete(`/api/dashboard-configs/pin?typeId=${selectedSas.id}&itemId=${appModule.id}&itemType=APP_MODULE`, {withCredentials: true})
     }
+  }
 
   return (
     <div className="relative flex flex-col gap-6">
-      <div className="flex w-full justify-between items-center">
-        <div>
+      <div className="flex w-full justify-between items-start">
+        <div className={"flex items-end gap-2"}>
+          <Link href={"/app-modules"} className={"text-2xl"}>app-modules/</Link>
           <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:leading-[1.1]">
             {appModule?.name}
           </h1>
-            <div onClick={pin}>Pin</div>
-            <div onClick={unpin}>Unpin</div>
         </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger><Button variant={"secondary"}><MoreHorizontal/></Button></DropdownMenuTrigger>
+          <DropdownMenuContent className={"w-[180px] mt-1 p-2 bg-neutral-950 drop-shadow-lg rounded-md"}>
+            <DropdownMenuItem onClick={pin}>
+              <Button className={"w-full"}>
+                Pin
+              </Button>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={unpin}>
+              <Button variant={"destructive"} className={"w-full"}>
+                Unpin
+              </Button>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       {dashboardConfig === undefined ?
         <div className={"grid gap-4 md:grid-cols-1 lg:grid-cols-3"}>
