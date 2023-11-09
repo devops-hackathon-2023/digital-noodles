@@ -66,6 +66,15 @@ model DashboardConfig {
     userId         String
     user           User @relation(fields: [userId], references: [id])
     dashboardCells DashboardCell[]
+    pinnedItems    DashboardPinnedItem[]
+}
+
+model DashboardPinnedItem {
+    id                String @id @default(cuid())
+    dashboardConfigId String
+    dashboradConfig   DashboardConfig @relation(fields: [dashboardConfigId], references: [id])
+    typeId            String
+    type              DashboardType
 }
 
 enum DashboardType {
