@@ -167,6 +167,14 @@ class DOPOClient {
         return await this.axios.get(`/deployment-units/${deploymentUnitId}/deployment-unit-versions`, { params })
             .then((response) => response.data)
     }
+
+    async getDeploymentUnit(deploymentUnitId: string): Promise<DOPOResponse<Deployment>> {
+        return await this.axios.get(`/deployment-units/${deploymentUnitId}`).then((response) => response.data);
+    }
+
+    async getAppModule(appModuleId: string): Promise<DOPOResponse<any>> {
+        return await this.axios.get(`/app-modules/${appModuleId}`).then((response) => response.data);
+    }
 }
 
 export default DOPOClient

@@ -6,6 +6,8 @@ import {prisma} from "@/backend/prisma/implementation";
 import DOPOClient from "@/backend/services/clients/DOPOClient";
 import UpdateDashboardConfigRequest from "@/backend/requests/UpdateDashboardConfigRequest";
 import hash from "object-hash"
+import PinItemToDashboardConfigRequest from "@/backend/requests/PinItemToDashboardConfigRequest";
+import UnPinItemToDashboardConfigRequest from "../requests/UnPinItemToDashboardConfigRequest";
 
 @injectable()
 class DashboardConfigService {
@@ -25,7 +27,8 @@ class DashboardConfigService {
                 dashboardType: dashboardType,
                 userId: this.authContext.getUser()?.id
             }, include: {
-                dashboardCells: true
+                dashboardCells: true,
+                pinnedItems: true
             }
         });
     }
@@ -130,6 +133,29 @@ class DashboardConfigService {
                     })).map(rvItem => ({ id: hash(rvItem), ...rvItem }))
                 })
                 return rv;
+            case DashboardType.SAS:
+                let dashboardConfig = await this.prisma.dashboardConfig.findFirst({
+                    where: {
+                        dashboardType: dashboardType,
+                        typeId: typeId
+                    },
+                    include: {
+                        pinnedItems: true
+                    }
+                })
+
+                if(dashboardConfig === null && this.authContext.getUser() !== null) {
+                    dashboardConfig = await this.prisma.dashboardConfig.create({
+                        data: {
+                            dashboardType, typeId, userId: this.authContext.getUser()!.id, env: ""
+                        }, include: {
+                            pinnedItems: true
+                        }
+                    })
+                }
+
+                // @ts-ignore
+                return await this.mapSASDashboard(dashboardConfig);
         }
 
         return {
@@ -137,12 +163,37 @@ class DashboardConfigService {
         }
     }
 
+    private async mapSASDashboard(dashboardConfig: DashboardConfig) {
+        // @ts-ignore
+        const promises = dashboardConfig.pinnedItems.map(async pinnedItem => {
+            switch (pinnedItem.type) {
+                case DashboardType.APP_MODULE:
+                    const appModule = await this.DOPOClient.getAppModule(pinnedItem.typeId)
+                    return {
+                        type: "APP_MODULE",
+                        item: appModule
+                    }
+                case DashboardType.DEPLOYMENT_UNIT:
+                    const deploymentUnit = await this.DOPOClient.getDeploymentUnit(pinnedItem.typeId)
+                    return {
+                        type: "DEPLOYMENT_UNIT",
+                        item: deploymentUnit
+                    }
+            }
+        })
+
+        const items = await Promise.all(promises);
+
+        return items;
+    }
+
     private async getDashboardConfigById(id: string) {
         return prisma.dashboardConfig.findFirst({
             where: {
                 id
             }, include: {
-                dashboardCells: true
+                dashboardCells: true,
+                pinnedItems: true
             }
         });
     }
@@ -161,7 +212,7 @@ class DashboardConfigService {
             // TODO: error handling
             return
         }
-
+        
         let cellsToDelete: DashboardCell[] = [];
         let cellsToCreate = data.dashboardCellConfigs.filter((dashboardConfig) => dashboardConfig.id === undefined);
         let cellsToUpdate = data.dashboardCellConfigs.filter(dashboardConfig => dashboardConfig.id !== undefined);
@@ -206,6 +257,55 @@ class DashboardConfigService {
         }))
 
         return await this.getDashboardConfigById(dashboardConfigId);
+    }
+
+    async pin(typeId: string, data: PinItemToDashboardConfigRequest) {
+        const dashboardConfigs = await this.fetchDashboardConfigs(typeId, DashboardType.SAS);
+        let dashboardConfig;
+        if(dashboardConfigs.length === 0)
+            dashboardConfig = await this.prisma.dashboardConfig.create({
+                data: {
+                    dashboardType: DashboardType.SAS, userId: this.authContext.getUser()!.id, env: '', typeId: typeId
+                }
+            })
+        else
+            dashboardConfig = dashboardConfigs[0]
+
+        if(await this.prisma.dashboardPinnedItem.findFirst({
+            where: {
+                dashboardConfigId: dashboardConfig.id, type: data.itemType, typeId: data.itemId
+            }
+        }) === null) {
+            await this.prisma.dashboardPinnedItem.create({
+                data: {
+                    dashboardConfigId: dashboardConfig.id, type: data.itemType, typeId: data.itemId
+                }
+            })
+        }
+
+    }
+
+    async unpin(typeId: string, data: UnPinItemToDashboardConfigRequest) {
+        const dashboardConfigs = await this.fetchDashboardConfigs(typeId, DashboardType.SAS);
+        let dashboardConfig;
+        if(dashboardConfigs.length === 0) {
+            console.log("Was 0");
+            dashboardConfig = await this.prisma.dashboardConfig.create({
+                data: {
+                    dashboardType: DashboardType.SAS, userId: this.authContext.getUser()!.id, env: '', typeId: typeId
+                }
+            })
+        }
+        else
+            dashboardConfig = dashboardConfigs[0]
+
+        await this.prisma.dashboardPinnedItem.deleteMany({
+            where: {
+                dashboardConfigId: dashboardConfig.id, type: data.itemType, typeId: data.itemId
+            }
+        });
+
+        return await this.mapSASDashboard(dashboardConfig as any);
     }
 }
 

@@ -15,7 +15,11 @@ import QualityGateResultChart from "@/components/molecules/qualityGateCharts/qua
 import QualityGatePercentChart from "@/components/molecules/qualityGateCharts/qualityGatePercentChart";
 import {Skeleton} from "@/components/atoms/skeleton";
 import KanbanEnvironmentBoard from "@/components/organisms/kanbanEnvironmentBoard/kanbanEnvironmentBoard";
-import {KeyedMutator} from "swr";
+import useSWR, {KeyedMutator} from "swr";
+import {useSas} from "@/utils/SasContext";
+import axiosInstance from "@/utils/lib/axiosInstance";
+import axios from "axios";
+import {fetcher} from "@/utils/lib/fetcher";
 
 interface AppModuleDashboardViewProps {
   configMutate: KeyedMutator<any>,
@@ -40,6 +44,22 @@ const AppModuleDetailView: NextPage<AppModuleDashboardViewProps> = ({
                                                                       configMutate,
                                                                       dashboardConfig
                                                                     }) => {
+    const { selectedSas } = useSas();
+
+    const { data: config } = useSWR(() => selectedSas ? `/api/dashboard-configs?typeId=${selectedSas.id}&dashboardType=SAS` : null, fetcher);
+
+    const pin = () => {
+        if(selectedSas && appModule) {
+            axios.post(`/api/dashboard-configs/pin?typeId=${selectedSas.id}`, { itemId: appModule?.id, itemType: "APP_MODULE" },
+                { withCredentials: true })
+        }
+    }
+
+    const unpin = () => {
+        if(selectedSas && appModule) {
+            axios.delete(`/api/dashboard-configs/pin?typeId=${selectedSas.id}&itemId=${appModule.id}&itemType=APP_MODULE`, { withCredentials: true })
+        }
+    }
 
   return (
     <div className="relative flex flex-col gap-6">
@@ -48,6 +68,8 @@ const AppModuleDetailView: NextPage<AppModuleDashboardViewProps> = ({
           <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:leading-[1.1]">
             {appModule?.name}
           </h1>
+            <div onClick={pin}>Pin</div>
+            <div onClick={unpin}>Unpin</div>
         </div>
       </div>
       {dashboardConfig === undefined ?
