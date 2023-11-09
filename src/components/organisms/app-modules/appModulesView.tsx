@@ -4,6 +4,15 @@ import {AppModulesDataTable} from "@/components/organisms/app-modules/appModuleD
 import {columns} from "@/components/organisms/app-modules/appModuleDataTable/columns";
 import {Button} from "@/components/atoms/button";
 import {Skeleton} from "@/components/atoms/skeleton";
+import React from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/dialog";
 
 interface AppModuleDetailViewProps {
   pageAppModules?: PageResponseAppModuleResponse,
@@ -54,9 +63,21 @@ const AppModulesView: NextPage<AppModuleDetailViewProps> = ({
             App modules
           </h1>
         </div>
-        <Button>
-          Add new app modules
-        </Button>
+        <Dialog>
+          <DialogTrigger>
+            <Button>
+              Add new app modules
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Github import</DialogTitle>
+              <DialogDescription>
+                github projects
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       </div>
       <AppModulesDataTable
         data={pageAppModules.page}

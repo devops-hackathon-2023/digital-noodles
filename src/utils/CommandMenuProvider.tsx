@@ -1,4 +1,4 @@
-import React, {ReactElement, useEffect, useState} from "react";
+import React, {createContext, ReactElement, useCallback, useContext, useEffect, useState} from "react";
 import {
   CommandDialog,
   CommandGroup,
@@ -12,6 +12,16 @@ import Link from "next/link";
 import {Boxes, Package} from "lucide-react";
 import {Skeleton} from "@/components/atoms/skeleton";
 import {Separator} from "@/components/atoms/separator";
+import {SasResponse} from "@/utils/types";
+
+interface CommandMenuProviderContextProps {
+  handleSearchModal: () => void;
+}
+
+const CommandMenuProviderContext = createContext<CommandMenuProviderContextProps>({
+  handleSearchModal: () => {
+  }
+});
 
 const CommandMenuProvider = ({children}: {
   children: ReactElement
@@ -26,10 +36,9 @@ const CommandMenuProvider = ({children}: {
       .then(setSearchResults);
   }
 
-  // useEffect(() => {
-  //   console.log(searchResults)
-  // }, [searchResults]);
-
+  const handleSearchModal = useCallback(() => {
+    setOpen(prevState => !prevState)
+  }, [])
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -73,50 +82,53 @@ const CommandMenuProvider = ({children}: {
   }
 
   return (
-    <>
-      {children}
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput onValueChange={handleSearch} placeholder="Type the name of what you are looking for..."/>
-        <CommandList>
-          <CommandGroup heading="Suggestions">
-            <CommandItem>
-              <span>SASes</span>
-            </CommandItem>
-            <CommandItem>
-              <span>App Modules</span>
-            </CommandItem>
-            <CommandItem>
-              <span>Deployment Units</span>
-            </CommandItem>
-          </CommandGroup>
-        </CommandList>
-        <Separator/>
-        {
-          searchResults.length > 0 ? <><CommandSeparator/>
-              <CommandList>
-                <CommandGroup>
-                  {
-                    searchResults.slice(0, 10).map((searchResult: any) => <Link href={constructHref(searchResult)}
-                                                                                onClick={() => setOpen(false)}>
-                      <CommandItem className={"flex gap-2"}>
-                        <div>{searchResult.label}</div>
-                        <div className={"w-1 h-1 bg-foreground rounded-xl"}></div>
-                        <div className={"flex gap-2"}>
-                          {getIcon(searchResult)}
-                          <div className={className("text-sm")}>{getLabel(searchResult)}</div>
-                        </div>
-                      </CommandItem>
-                    </Link>)
-                  }
-                </CommandGroup>
-              </CommandList>
-            </>
-            :
-            <Skeleton className={"w-[80%] h-4 m-2"}/>
-        }
-      </CommandDialog>
-    </>
+    <CommandMenuProviderContext.Provider value={{handleSearchModal}}>
+      <>
+        {children}
+        <CommandDialog open={open} onOpenChange={setOpen}>
+          <CommandInput onValueChange={handleSearch} placeholder="Type the name of what you are looking for..."/>
+          <CommandList>
+            <CommandGroup heading="Suggestions">
+              <CommandItem>
+                <span>SASes</span>
+              </CommandItem>
+              <CommandItem>
+                <span>App Modules</span>
+              </CommandItem>
+              <CommandItem>
+                <span>Deployment Units</span>
+              </CommandItem>
+            </CommandGroup>
+          </CommandList>
+          <Separator/>
+          {
+            searchResults.length > 0 ? <><CommandSeparator/>
+                <CommandList>
+                  <CommandGroup>
+                    {
+                      searchResults.slice(0, 10).map((searchResult: any) => <Link href={constructHref(searchResult)}
+                                                                                  onClick={() => setOpen(false)}>
+                        <CommandItem className={"flex gap-2"}>
+                          <div>{searchResult.label}</div>
+                          <div className={"w-1 h-1 bg-foreground rounded-xl"}></div>
+                          <div className={"flex gap-2"}>
+                            {getIcon(searchResult)}
+                            <div className={className("text-sm")}>{getLabel(searchResult)}</div>
+                          </div>
+                        </CommandItem>
+                      </Link>)
+                    }
+                  </CommandGroup>
+                </CommandList>
+              </>
+              :
+              <Skeleton className={"w-[80%] h-4 m-2"}/>
+          }
+        </CommandDialog>
+      </>
+    </CommandMenuProviderContext.Provider>
   )
 }
 
-export default CommandMenuProvider
+export default CommandMenuProvider;
+export const useSearch = () => useContext(CommandMenuProviderContext);

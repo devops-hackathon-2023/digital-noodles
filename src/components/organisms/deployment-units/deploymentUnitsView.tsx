@@ -6,6 +6,15 @@ import {
 import {columns} from "@/components/organisms/deployment-units/deploymentUnitsDataTable/columns";
 import {Button} from "@/components/atoms/button";
 import {Skeleton} from "@/components/atoms/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/dialog";
+import React from "react";
 
 interface DeploymentUnitsViewProps {
   pageDeploymentUnits?: PageResponseDeploymentUnitResponse,
@@ -54,9 +63,21 @@ const DeploymentUnitsView: NextPage<DeploymentUnitsViewProps> = ({
             Deployment Units
           </h1>
         </div>
-        <Button>
-          Add new deployment units
-        </Button>
+        <Dialog>
+          <DialogTrigger>
+            <Button>
+              Add new deployment units
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Github import</DialogTitle>
+              <DialogDescription>
+                github projects
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       </div>
       <DeploymentUnitsDataTable
         data={pageDeploymentUnits?.page.filter(d => d.sasId === selectedSas?.id)}

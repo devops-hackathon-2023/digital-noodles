@@ -107,7 +107,7 @@ const CPUUsageCell: React.FC<CellProps> = ({
           <CardContent className={"flex-grow"}>
             {
               data ? <>
-                  {w > 2 ?
+                  {w > 1 ?
                     <ResponsiveContainer width={"100%"} height="100%">
                       <LineChart data={data}>
                         {minCores(1) && <Line type="monotone" dataKey="core1Percent" stroke="#8884d8" fill={"#8884d8"}/>}
@@ -116,17 +116,21 @@ const CPUUsageCell: React.FC<CellProps> = ({
                         {minCores(4) && <Line type="monotone" dataKey="core4Percent" stroke="yellow" fill={"#8884d8"}/>}
                         {/*<CartesianGrid stroke="#ccc" />*/}
 
-                        <XAxis className={className({'hidden': w <= 2})} dataKey="time"
+                        <XAxis className={className({'hidden': w <= 1})} dataKey="time"
                                tickFormatter={(time) => formatISO8601String(time)}/>
-                        <YAxis className={className({'hidden': w <= 2})} width={w <= 2 ? 0 : 45} domain={[0, 100]}
+                        <YAxis className={className({'hidden': w <= 1})} width={w <= 2 ? 0 : 45} domain={[0, 100]}
                                tickFormatter={(tick) => `${tick}%`}/>
                       </LineChart>
-                    </ResponsiveContainer> : <div className={"grid grid-cols-2 grid-rows-2 flex-grow"}>
-                      {minCores(1) && coreDisplay(1)}
-                      {minCores(2) && coreDisplay(2)}
-                      {minCores(3) && coreDisplay(2)}
-                      {minCores(4) && coreDisplay(4)}
-                    </div>}
+                    </ResponsiveContainer> :
+                    <div className={"flex w-full justify-center items-center h-full"}>
+                      <div className={"font-bold text-2xl gap-6 grid grid-cols-2 grid-rows-2 flex-grow"}>
+                        {minCores(1) && coreDisplay(1)}
+                        {minCores(2) && coreDisplay(2)}
+                        {minCores(3) && coreDisplay(2)}
+                        {minCores(4) && coreDisplay(4)}
+                      </div>
+                    </div>
+                  }
                 </>
                 : "Loading"
             }
@@ -157,18 +161,18 @@ const RAMUsageCell: React.FC<CellProps> = ({
     <CardContent className={"flex-grow"}>
       {
         data ? <>
-          {w > 2 ?
+          {w > 1 ?
             <ResponsiveContainer width={"100%"} height="100%">
               <LineChart data={data}>
                 <Line type="monotone" dataKey="amountInMB" stroke="#8884d8" fill={"#8884d8"}/>
                 {/*<CartesianGrid stroke="#ccc" />*/}
-                <XAxis className={className({'hidden': w <= 2})} dataKey="time"
+                <XAxis className={className({'hidden': w <= 1})} dataKey="time"
                        tickFormatter={(time) => formatISO8601String(time)}/>
-                <YAxis className={className({'hidden': w <= 2})} width={w <= 2 ? 0 : 45} domain={[0, 20000]}
+                <YAxis className={className({'hidden': w <= 1})} width={w <= 1 ? 0 : 45} domain={[0, 20000]}
                        tickFormatter={(tick) => `${mbToGb(tick)} GB`}/>
               </LineChart>
             </ResponsiveContainer> : <div
-              className={"text-3xl text-center h-full flex items-center"}>{`${mbToGb(data[data.length - 1].amountInMB)} / 20GB`}</div>}
+              className={"text-3xl text-center h-full flex items-center justify-center font-bold"}>{`${mbToGb(data[data.length - 1].amountInMB)} / 20GB`}</div>}
         </> : "Loading"
       }
     </CardContent>

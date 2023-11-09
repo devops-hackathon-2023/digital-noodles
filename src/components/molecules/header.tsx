@@ -12,10 +12,12 @@ import {Sheet, SheetContent, SheetFooter, SheetHeader, SheetTrigger} from "@/com
 import {Separator} from "@/components/atoms/separator";
 import {useSession} from "next-auth/react";
 import React from "react";
+import {useSearch} from "@/utils/CommandMenuProvider";
 
 const Header = () => {
   const pathname = usePathname()
   const {data: session} = useSession()
+  const {handleSearchModal} = useSearch()
 
   const isLoginPage = pathname === '/login';
 
@@ -45,7 +47,7 @@ const Header = () => {
             </div>
           </div>
           <div className={"flex sm:gap-4 items-center gap-2"}>
-            <Input placeholder={"Search..."} className={'w-full'}/>
+            <Input placeholder={"Search..."} className={'w-full cursor-pointer'} onClick={handleSearchModal}/>
             <div className={"flex-shrink-0"}>
               <ModeToggle className={"hidden sm:flex"}/>
             </div>

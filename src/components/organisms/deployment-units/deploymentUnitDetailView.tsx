@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import {ArrowDown, Boxes, GitBranch, GitCommitHorizontal, Rocket} from "lucide-react";
 import {Button} from "@/components/atoms/button";
 import {DropdownMenu, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger} from "@/components/atoms/dropdown-menu";
@@ -23,6 +23,11 @@ import Deployments from "@/components/organisms/deployment-units/tabs/deployment
 import Link from "next/link";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import {toast} from "@/components/ui/use-toast";
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/atoms/dialog";
+import {Skeleton} from "@/components/atoms/skeleton";
+import DeploymentCard from "@/components/molecules/deploymentCard";
+import axiosInstance from "@/utils/lib/axiosInstance";
+import {DialogTrigger} from "@/components/ui/dialog";
 
 
 interface DeploymentUnitDetailViewProps {
@@ -77,7 +82,21 @@ const DeploymentUnitDetailView: React.FC<DeploymentUnitDetailViewProps> = ({
                                                                              appModule
                                                                            }) => {
 
-  if (dashboardConfigs === undefined) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const handleModal = useCallback(() => {
+    setIsModalOpen(prevState => !prevState)
+  }, [])
+
+  const handleDeploy = () => {
+    handleModal()
+    toast({
+      title: `Started a deployed of ${deploymentUnit.name}!`,
+      variant: "info"
+    })
+  }
+
+  if (dashboardConfigs === undefined || deploymentUnit === undefined) {
     return <>Loading</>
   }
 
@@ -94,7 +113,6 @@ const DeploymentUnitDetailView: React.FC<DeploymentUnitDetailViewProps> = ({
               </span>
               <span className={"m-2 font-medium tracking-normal "}>/</span>
 
-
               <CopyToClipboard text={deploymentUnit?.id} onCopy={() => {
                 toast({
                   title: "Copied to clipboard!",
@@ -110,6 +128,7 @@ const DeploymentUnitDetailView: React.FC<DeploymentUnitDetailViewProps> = ({
             <VersionInfo icon={<GitBranch className={"w-4 h-4"}/>} text={selectedVersion?.gitBranch}/>
             <VersionInfo icon={<GitCommitHorizontal className={"w-4 h-4"}/>}
                          text={`#${selectedVersion?.gitCommitHash.slice(0, 7)}`}/>
+
             {/*<DropdownMenu modal={true}>*/}
             {/*  <DropdownMenuTrigger>*/}
             {/*    <VersionInfo icon={<Rocket className={"w-4 h-4"}/>} text={selectedVersion?.version} droppable/>*/}
@@ -134,41 +153,60 @@ const DeploymentUnitDetailView: React.FC<DeploymentUnitDetailViewProps> = ({
         {/*  Settings*/}
         {/*</Button>*/}
       </div>
-      <div className={"flex gap-2"}>
-        <div>
-          <Label>Environment</Label>
-          <Select defaultValue={"DEV"} onValueChange={setSelectedEnv}>
-            <SelectTrigger className="w-[180px] mt-1">
-              <SelectValue placeholder="Environment"/>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="DEV">DEV</SelectItem>
-              <SelectItem value="INT">INT</SelectItem>
-              <SelectItem value="PRS">PRS</SelectItem>
-              <SelectItem value="PRED">PRED</SelectItem>
-              <SelectItem value="PROD">PROD</SelectItem>
-            </SelectContent>
-          </Select>
+      <div className={"flex gap-2 items-end w-full justify-between flex-wrap"}>
+        <div className={"flex gap-2"}>
+          <div>
+            <Label>Environment</Label>
+            <Select defaultValue={"DEV"} onValueChange={setSelectedEnv}>
+              <SelectTrigger className="w-[180px] mt-1">
+                <SelectValue placeholder="Environment"/>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="DEV">DEV</SelectItem>
+                <SelectItem value="INT">INT</SelectItem>
+                <SelectItem value="PRS">PRS</SelectItem>
+                <SelectItem value="PRED">PRED</SelectItem>
+                <SelectItem value="PROD">PROD</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Version</Label>
+            {/*// @ts-ignore*/}
+            <Select onValueChange={setSelectedVersion} value={selectedVersion}>
+              <SelectTrigger className="w-[180px] mt-1">
+                <SelectValue placeholder="Environment"/>
+              </SelectTrigger>
+              <SelectContent className={" h-[180px]"}>
+                {
+                  deploymentUnitVersions?.page.map((version, index) => (
+                    // @ts-ignore
+                    <SelectItem value={version} key={index}>
+                      {version.version}
+                    </SelectItem>
+                  ))
+                }
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-        <div>
-          <Label>Version</Label>
-          {/*// @ts-ignore*/}
-          <Select onValueChange={setSelectedVersion} value={selectedVersion}>
-            <SelectTrigger className="w-[180px] mt-1">
-              <SelectValue placeholder="Environment"/>
-            </SelectTrigger>
-            <SelectContent className={" h-[180px]"}>
-              {
-                deploymentUnitVersions?.page.map((version, index) => (
-                  // @ts-ignore
-                  <SelectItem value={version} key={index}>
-                    {version.version}
-                  </SelectItem>
-                ))
-              }
-            </SelectContent>
-          </Select>
-        </div>
+        <Dialog open={isModalOpen} defaultOpen={false} onOpenChange={setIsModalOpen}>
+          <DialogTrigger>
+            <Button>
+              Deploy
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>New deployment</DialogTitle>
+              <DialogDescription>
+                <DeploymentCard deploymentUnit={deploymentUnit}
+                                closeModal={handleModal}
+                                handleDeploy={handleDeploy}/>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       </div>
       <Tabs defaultValue="dashboard">
         <TabsList>
