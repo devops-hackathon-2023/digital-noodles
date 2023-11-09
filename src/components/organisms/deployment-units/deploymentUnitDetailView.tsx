@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {ArrowDown, Boxes, GitBranch, GitCommitHorizontal, Rocket} from "lucide-react";
+import {ArrowDown, Boxes, GitBranch, GitCommitHorizontal, MoreHorizontal, Rocket} from "lucide-react";
 import {Button} from "@/components/atoms/button";
 import {DropdownMenu, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger} from "@/components/atoms/dropdown-menu";
 import {DropdownMenuContent} from "@radix-ui/react-dropdown-menu";
@@ -28,6 +28,10 @@ import {Skeleton} from "@/components/atoms/skeleton";
 import DeploymentCard from "@/components/molecules/deploymentCard";
 import axiosInstance from "@/utils/lib/axiosInstance";
 import {DialogTrigger} from "@/components/ui/dialog";
+import useSWR from "swr";
+import {fetcher} from "@/utils/lib/fetcher";
+import axios from "axios";
+import {useSas} from "@/utils/SasContext";
 
 
 interface DeploymentUnitDetailViewProps {
@@ -83,10 +87,28 @@ const DeploymentUnitDetailView: React.FC<DeploymentUnitDetailViewProps> = ({
                                                                            }) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const {selectedSas} = useSas();
 
   const handleModal = useCallback(() => {
     setIsModalOpen(prevState => !prevState)
   }, [])
+
+
+  const pin = () => {
+    if (selectedSas && appModule) {
+      axios.post(`/api/dashboard-configs/pin?typeId=${selectedSas.id}`, {
+          itemId: deploymentUnit?.id,
+          itemType: "DEPLOYMENT_UNIT"
+        },
+        {withCredentials: true})
+    }
+  }
+
+  const unpin = () => {
+    if (selectedSas && appModule) {
+      axios.delete(`/api/dashboard-configs/pin?typeId=${selectedSas.id}&itemId=${deploymentUnit.id}&itemType=DEPLOYMENT_UNIT`, {withCredentials: true})
+    }
+  }
 
   const handleDeploy = () => {
     handleModal()
@@ -102,7 +124,7 @@ const DeploymentUnitDetailView: React.FC<DeploymentUnitDetailViewProps> = ({
 
   return (
     <div className="relative flex flex-col gap-5 no-scrollbar">
-      <div className={"flex gap-4 items-center w-full justify-between"}>
+      <div className={"flex gap-4 items-start w-full justify-between"}>
         <div className={"flex items-center gap-6 flex-wrap"}>
           <div className={"flex items-center gap-4"}>
             <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:leading-[1.1]">
@@ -112,14 +134,12 @@ const DeploymentUnitDetailView: React.FC<DeploymentUnitDetailViewProps> = ({
                 </Link>
               </span>
               <span className={"m-2 font-medium tracking-normal "}>/</span>
-
               <CopyToClipboard text={deploymentUnit?.id} onCopy={() => {
                 toast({
                   title: "Copied to clipboard!",
                   description: deploymentUnit?.id,
                 })
               }}><span className={"cursor-copy"}>{deploymentUnit?.name}</span>
-
               </CopyToClipboard>
             </h1>
             <Boxes className={"w-8 h-8"}/>
@@ -128,30 +148,23 @@ const DeploymentUnitDetailView: React.FC<DeploymentUnitDetailViewProps> = ({
             <VersionInfo icon={<GitBranch className={"w-4 h-4"}/>} text={selectedVersion?.gitBranch}/>
             <VersionInfo icon={<GitCommitHorizontal className={"w-4 h-4"}/>}
                          text={`#${selectedVersion?.gitCommitHash.slice(0, 7)}`}/>
-
-            {/*<DropdownMenu modal={true}>*/}
-            {/*  <DropdownMenuTrigger>*/}
-            {/*    <VersionInfo icon={<Rocket className={"w-4 h-4"}/>} text={selectedVersion?.version} droppable/>*/}
-            {/*  </DropdownMenuTrigger>*/}
-
-            {/*  <DropdownMenuContent className="w-[120px] bg-card mt-2 shadow-md rounded-md p-2 border-solid">*/}
-            {/*    <DropdownMenuGroup>*/}
-            {/*      <div className={"h-40 overflow-scroll no-scrollbar "}>*/}
-            {/*        {*/}
-            {/*          deploymentUnitVersions?.page.map(version => (*/}
-            {/*            <DropdownMenuItem onClick={() => setSelectedVersion(version)}>*/}
-            {/*              <span>{version.version}</span></DropdownMenuItem>*/}
-            {/*          ))*/}
-            {/*        }*/}
-            {/*      </div>*/}
-            {/*    </DropdownMenuGroup>*/}
-            {/*  </DropdownMenuContent>*/}
-            {/*</DropdownMenu>*/}
           </div>
         </div>
-        {/*<Button>*/}
-        {/*  Settings*/}
-        {/*</Button>*/}
+        <DropdownMenu>
+          <DropdownMenuTrigger><Button variant={"secondary"}><MoreHorizontal/></Button></DropdownMenuTrigger>
+          <DropdownMenuContent className={"w-[180px] mt-1 p-2 bg-neutral-950 drop-shadow-lg rounded-md"}>
+            <DropdownMenuItem onClick={pin}>
+              <Button className={"w-full"}>
+                Pin
+              </Button>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={unpin}>
+              <Button variant={"destructive"} className={"w-full"}>
+                Unpin
+              </Button>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       <div className={"flex gap-2 items-end w-full justify-between flex-wrap"}>
         <div className={"flex gap-2"}>
