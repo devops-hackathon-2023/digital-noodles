@@ -83,9 +83,9 @@ export default function TeamSwitcher({className}: TeamSwitcherProps) {
             <CaretSortIcon className="ml-auto h-4 w-4 shrink-0 opacity-50"/>
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="sm:w-[200px] p-0 w-full">
+        <PopoverContent className="sm:w-[200px] p-0 lg:w-full">
           <Command>
-            <CommandList>
+            <CommandList className={"w-full max-h-[300px] no-scrollbar"}>
               <CommandInput placeholder="Search SAS..."/>
               <CommandEmpty>No team found.</CommandEmpty>
               {allSasResponses?.map((s: SasResponse) => (
@@ -132,7 +132,7 @@ export default function TeamSwitcher({className}: TeamSwitcherProps) {
                     }}
                   >
                     <PlusCircledIcon className="mr-2 h-5 w-5"/>
-                    Create Team
+                    Create new SAS
                   </CommandItem>
                 </DialogTrigger>
               </CommandGroup>
@@ -143,15 +143,12 @@ export default function TeamSwitcher({className}: TeamSwitcherProps) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create new SAS</DialogTitle>
-          <DialogDescription>
-            Add a new team to manage deploys.
-          </DialogDescription>
         </DialogHeader>
         <div>
           <div className="space-y-4 py-2 pb-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Team name</Label>
-              <Input id="name" placeholder="Acme Inc."/>
+              <Label htmlFor="name">SAS name</Label>
+              <Input id="name" placeholder="devops"/>
             </div>
           </div>
         </div>

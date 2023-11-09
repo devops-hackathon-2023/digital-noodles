@@ -31,7 +31,7 @@ const QualityGateAveragePercentChart: NextPage<QualityChartProps> = ({
       </CardHeader>
       <CardContent>
         <div className={"flex justify-center items-center w-full h-[250px] text-6xl font-bold"}>
-          <CountUp end={sumOfPercentages / 20} decimals={4} duration={1}/>%
+          <CountUp end={sumOfPercentages / 20} decimals={2} duration={1}/>%
         </div>
       </CardContent>
     </Card>

@@ -133,7 +133,7 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({
           xxs: 0
         }}
         cols={{
-          lg: 3,
+          lg: 4,
           md: 2,
           xxs: 1
         }}

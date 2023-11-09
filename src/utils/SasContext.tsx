@@ -2,6 +2,7 @@ import React, {createContext, ReactNode, useCallback, useContext, useEffect, use
 import {PageResponseSasResponse, SasResponse} from "@/utils/types";
 import useSWR from "swr";
 import {flyIoFetcher} from "@/utils/lib/fetcher";
+import {toast} from "@/components/ui/use-toast";
 
 interface SasContextProps {
   selectedSas: SasResponse | undefined;
@@ -31,6 +32,11 @@ export const SasProvider: React.FC<{
 
   const handleSas = useCallback((newSelectedSas: SasResponse) => {
     setSas(newSelectedSas)
+    toast({
+      title: "Switched SAS!",
+      description: `You are now in ${newSelectedSas?.name}.`,
+      variant: "info"
+    })
   }, [])
 
   useEffect(() => {
